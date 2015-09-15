@@ -21,7 +21,7 @@ namespace wiff
 {
     class Program
     {
-        public static void Parse(Spectrum spec, WiffFile wifffile,int cycleCount, int experimentCount, string ms1file,string ms2file,string mgffile,Param para)
+        public static void Parse(Spectrum spec, WiffFile wifffile, int cycleCount, int experimentCount, string ms1file, string ms2file, string mgffile, Param para)
         {
             StreamWriter writerms1 = null; 
             StreamWriter writerms2 = null; 
@@ -97,8 +97,7 @@ namespace wiff
                                     spec.WriteMS2(writerms2);
                                 }
                                 if (para.mgf == 1)
-                                {
-                                   
+                                {                       
                                     spec.WriteMGF(wifffile,writermgf);
                                 }
                             }
@@ -167,8 +166,11 @@ namespace wiff
         static void Main(string[] args)
         {
             Application.EnableVisualStyles();
+
             Stopwatch watch = new Stopwatch();
-            watch.Start();
+            watch.Start();  //计时器
+
+
             List<string> files = new List<string>();
             Param para = new Param();
             para.ParseParam(args);
@@ -182,9 +184,11 @@ namespace wiff
             {
                 for (int i = 0; i < files.Count; i++)
                 {
-                    extract(files[i], para);
+                    extract(files[i], para); //提取数据
                 }
             }
+
+
             watch.Stop();
             string runtime = (watch.ElapsedMilliseconds / 1000).ToString();
             Console.WriteLine("{0} {1}", "[wiff] == == == Time elapsed: ", runtime + "s. == == ==");

@@ -44,6 +44,9 @@ namespace wiff
         {
             return new WiffFile(wiffpath);
         }
+
+
+
         //这四个数据结构都是AB提供的API
         public AnalystWiffDataProvider provider;
         public Batch m_batch;
@@ -104,6 +107,9 @@ namespace wiff
             return GetSampleNames().Count;
         }
     }
+
+
+
     class Spectrum
     {
      //   public int experimentCount;
@@ -176,7 +182,7 @@ namespace wiff
             writer.WriteLine("{0} {1}", "H\tCreationDate\t", localtime);
             writer.WriteLine("{0} {1}", "H\tExtractor\t", "wiff");
             writer.WriteLine("{0} {1}", "H\tExtractorVersion\t", "1.0.0.1");
-            writer.WriteLine("{0} {1}", "H\tComments\t", "Owned by pFind Studio, 2014");
+            writer.WriteLine("{0} {1}", "H\tComments\t", "Owned by pFind Studio, 2015");
             writer.WriteLine("{0} {1}", "H\tDataType\t", (para.cent == true) ? "Centroid" : "Profile");
         }
 
