@@ -42,6 +42,9 @@ namespace wiff
                 writermgf = new StreamWriter(new FileStream(mgffile, FileMode.Create, FileAccess.Write));
             }
 
+            int countMs1Spe = 0;
+            int countMs2Spe = 0; //缓冲区计数器
+
             for (int j = 0; j < cycleCount; j++)
             {
                 string header = "[wiff] <Output files>: ";
@@ -91,6 +94,18 @@ namespace wiff
                             if (spec.GetMSLevel() == 1 && para.ms1 == 1)
                             {
                                 spec.WriteMS1(writerms1);
+                                if (countMs1Spe != 10000)
+                                {
+
+                                }
+                                else { 
+                                
+                                    //写出去
+                                    countMs1Spe = 0;
+                                
+                                }
+                                //TODO: 转成string后存进char *
+
                             }else if(spec.GetMSLevel() > 1){
                                 if (para.ms2 == 1)
                                 {
