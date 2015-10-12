@@ -44,13 +44,13 @@ namespace wiff
 
             int countMs1Spe = 0;
             int countMs2Spe = 0; //缓冲区计数器
-            char[] outputBuffer = new char[200];
+            char[] outputBuffer = new char[1024*1024*200];
             int indexBuffer = 0;
 
             for (int j = 0; j < cycleCount; j++)
             {
-                //string header = "[wiff] <Output files>: ";
-                //Console.Write("\r" + header + String.Format("{0:F3}", (double)(j + 1) / (double)cycleCount * 100) + "%");
+                string header = "[wiff] <Output files>: ";
+                Console.Write("\r" + header + String.Format("{0:F3}", (double)(j + 1) / (double)cycleCount * 100) + "%");
                 for (int i = 0; i < experimentCount; i++)
                 {
                     TotalIonChromatogram totalIonChromatogram = spec.array[i];
@@ -96,44 +96,118 @@ namespace wiff
                             if (spec.GetMSLevel() == 1 && para.ms1 == 1)
                             {
                                 //spec.WriteMS1(writerms1);
-                                countMs1Spe++;
-                                if (countMs1Spe == 3)
+                                
+                                if (countMs1Spe != 10000)
                                 {
                                     string str = string.Format("S\t{0:d6}\t{0:d6}\n", spec.scan, spec.scan);
-                                    Console.WriteLine(str);
+                                    //Console.WriteLine(str);
                                     for (int k = 0; k < str.Length; k++) { 
                                         outputBuffer[indexBuffer++] = str[k];
                                     }
-                                    outputBuffer[indexBuffer] = '\0';
-                                    writerms1.Write(outputBuffer, 0, indexBuffer);
-                                    writerms1.Close();
+                                    //outputBuffer[indexBuffer] = '\0';
+                                    //writerms1.Write(outputBuffer, 0, indexBuffer);
+                                    //writerms1.Close();
     
                                     str = string.Format("I\tNumberOfPeaks\t{0:d}\n", spec.intensity.Count);
-                                    Console.WriteLine(str);
+                                    for (int k = 0; k < str.Length; k++)
+                                    {
+                                        outputBuffer[indexBuffer++] = str[k];
+                                    }
+                                    //Console.WriteLine(str);
                                     str = string.Format("I\tRetTime\t{0:F6}\n", spec.retentionTime);
-                                    Console.WriteLine(str);
+                                    for (int k = 0; k < str.Length; k++)
+                                    {
+                                        outputBuffer[indexBuffer++] = str[k];
+                                    }
+                                    //Console.WriteLine(str);
                                     str = string.Format("I\tIonInjectionTime\t{0:F}\n", spec.m_spectrumInfo.EndRT - spec.m_spectrumInfo.StartRT);
-                                    Console.WriteLine(str);
+                                    for (int k = 0; k < str.Length; k++)
+                                    {
+                                        outputBuffer[indexBuffer++] = str[k];
+                                    }
+                                    //Console.WriteLine(str);
                                     str = string.Format("I\tInstrumentType\tQTOF\n");
-                                    Console.WriteLine(str);
+                                    for (int k = 0; k < str.Length; k++)
+                                    {
+                                        outputBuffer[indexBuffer++] = str[k];
+                                    }
+                                    //Console.WriteLine(str);
                                     for (int k = 0; k < spec.mz.Count; k++) {
 
                                         str = string.Format("{0:F5}\t", spec.mz[k]);
-                                        Console.WriteLine(str);
+                                        for (int z = 0; z < str.Length; z++)
+                                        {
+                                            outputBuffer[indexBuffer++] = str[z];
+                                        }
+                                        //Console.WriteLine(str);
                                         str = string.Format("{0:F0}\n", spec.intensity[k]);
-                                        Console.WriteLine(str);
+                                        for (int z = 0; z < str.Length; z++)
+                                        {
+                                            outputBuffer[indexBuffer++] = str[z];
+                                        }
+                                        //Console.WriteLine(str);
 
                                     }
-                                    Console.Read();
+                                    //Console.Read();
+                                    countMs1Spe++;
+                                }
+                                else { 
+                                
+                                    //写10000个出去
+                                    writerms1.Write(outputBuffer, 0, indexBuffer);
+                                    //清零
+                                    countMs1Spe = 0; indexBuffer = 0;
+
+                                    //再读一个
+                                    string str = string.Format("S\t{0:d6}\t{0:d6}\n", spec.scan, spec.scan);
+                                    for (int k = 0; k < str.Length; k++)
+                                    {
+                                        outputBuffer[indexBuffer++] = str[k];
+                                    }
+
+                                    str = string.Format("I\tNumberOfPeaks\t{0:d}\n", spec.intensity.Count);
+                                    for (int k = 0; k < str.Length; k++)
+                                    {
+                                        outputBuffer[indexBuffer++] = str[k];
+                                    }
+
+                                    str = string.Format("I\tRetTime\t{0:F6}\n", spec.retentionTime);
+                                    for (int k = 0; k < str.Length; k++)
+                                    {
+                                        outputBuffer[indexBuffer++] = str[k];
+                                    }
+
+                                    str = string.Format("I\tIonInjectionTime\t{0:F}\n", spec.m_spectrumInfo.EndRT - spec.m_spectrumInfo.StartRT);
+                                    for (int k = 0; k < str.Length; k++)
+                                    {
+                                        outputBuffer[indexBuffer++] = str[k];
+                                    }
+
+                                    str = string.Format("I\tInstrumentType\tQTOF\n");
+                                    for (int k = 0; k < str.Length; k++)
+                                    {
+                                        outputBuffer[indexBuffer++] = str[k];
+                                    }
+
+                                    for (int k = 0; k < spec.mz.Count; k++)
+                                    {
+
+                                        str = string.Format("{0:F5}\t", spec.mz[k]);
+                                        for (int z = 0; z < str.Length; z++)
+                                        {
+                                            outputBuffer[indexBuffer++] = str[z];
+                                        }
+
+                                        str = string.Format("{0:F0}\n", spec.intensity[k]);
+                                        for (int z = 0; z < str.Length; z++)
+                                        {
+                                            outputBuffer[indexBuffer++] = str[z];
+                                        }
+
+                                    }
+                                    countMs1Spe++;
 
                                 }
-                                //else { 
-                                
-                                //    //写出去
-                                //    //清零
-                                //    countMs1Spe = 0;
-                                
-                                //}
                                 //TODO: 转成string后存进char *
 
                             }else if(spec.GetMSLevel() > 1){
@@ -150,6 +224,10 @@ namespace wiff
                     }
                 }
             }
+
+            writerms1.Write(outputBuffer, 0, indexBuffer);
+
+
             if (para.ms1 == 1)
             {
                 writerms1.Close();
