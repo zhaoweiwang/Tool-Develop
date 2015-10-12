@@ -101,6 +101,7 @@ namespace wiff
                                 else { 
                                 
                                     //写出去
+                                    //清零
                                     countMs1Spe = 0;
                                 
                                 }
