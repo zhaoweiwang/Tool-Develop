@@ -12,6 +12,7 @@
 #include <vector>
 #include <ctime>
 #include <stdio.h>
+#include "stringProcess.h"
 
 using namespace std;
 

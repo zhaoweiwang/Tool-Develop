@@ -27,9 +27,15 @@
     <ClCompile Include="readCmdline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="stringProcess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Head.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stringProcess.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
