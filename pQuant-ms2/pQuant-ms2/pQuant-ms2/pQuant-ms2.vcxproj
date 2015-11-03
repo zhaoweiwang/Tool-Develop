@@ -82,6 +82,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="printLogo.cpp" />
     <ClCompile Include="readCmdline.cpp" />
+    <ClCompile Include="readData.cpp" />
     <ClCompile Include="stringProcess.cpp" />
   </ItemGroup>
   <ItemGroup>

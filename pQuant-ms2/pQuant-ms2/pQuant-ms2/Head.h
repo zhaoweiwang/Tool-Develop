@@ -8,6 +8,7 @@
 #define IHEAD_H
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <ctime>
@@ -15,6 +16,35 @@
 #include "stringProcess.h"
 
 using namespace std;
+
+//自定义变量区
+
+typedef struct parainfo{
+
+	int quantMethod;				//1-3代表iTRAQ4、iTRAQ8、TMT
+	string input_spectra_path = "";	//pFind.spectra结果文件，作为输入文件；
+	string pf_path = "";			//pf2、pfidx文件路径；
+	string output_ratio_path = "";	//定量比值输出路径；
+
+}paraInfo;
+
+//包含一个psm需要的全部信息
+typedef struct psminfo{
+	int		scan = 0;
+	double	score = 0.0;
+	double	spectra_mh = 0.0;
+	double	pep_mh = 0.0;
+	string	sq = "";
+	int		charge = 0;
+	double	mz = 0;
+	double	fdr = 0;
+	string	title = "";
+	string	prosandCons = "";//正库or反库
+	vector<string> modify;
+	int cleaves = 0;
+
+}psmInfo;
+
 
 //参数区
 const string TIMESTRING = "2015-10-26 16:00";
@@ -45,5 +75,13 @@ void checkDate();
 返回：	无
 */
 void readCmdline(const int argc, char* argv[]);
+
+/*
+函数名：	readData
+功能：	读取pFind.spectra获取PSM，读取pf2.idx，读取pf2获取谱峰信息；
+输入：	无
+返回：	无
+*/
+void readData();
 
 #endif

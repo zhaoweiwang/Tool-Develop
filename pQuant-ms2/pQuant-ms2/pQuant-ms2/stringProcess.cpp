@@ -152,35 +152,3 @@ bool exist(vector<vector<char> > &board, string word) {
 
 	return false;
 }
-
-class Solution {
-public:
-
-	void dfs(int step, int sum, vector<int>& candidates, int target, int vector<vector<int>>& result, vector<int>& temp){
-		if (sum == target){
-			result.push_back(temp);
-			return;
-		}
-
-		for (int i = step; i < candidates.size(); i++){
-			if (sum + candidates[i] > target)
-				return;
-			temp.push_back(candidates[i]);
-			dfs(i + 1, sum, candidates, target, result, temp);
-			temp.pop_back(candidates[i]);
-		}
-		return;
-	}
-
-	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
-		vector<vector<int>> result;
-		vector<int> temp;
-
-		if (candidates.empty()) return result;
-
-		sort(candidates.begin(), candidates.end());
-		dfs(0, 0, candidates, target, result, temp);
-
-		return result;
-	}
-};

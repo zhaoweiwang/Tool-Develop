@@ -3,6 +3,8 @@
 vector<string> m_cmdInfo;
 const string Version = "-Release-1.0.0";
 
+parainfo para;
+
 void WhatsNew()
 {
 	cout << "What's New:" << endl;
@@ -34,7 +36,7 @@ void GeneratedParamTemplate()
 		return;
 	}
 
-	pfile = fopen("pParse.para", "w");
+	pfile = fopen("pQuant-ms2.para", "w");
 	fprintf(pfile, "# pQuant-ms2.para template\n");
 	fprintf(pfile, "# For help: mail to wangzhaowei@ict.ac.cn \n");
 	fprintf(pfile, "# Time: 2015.10.27\n\n");
@@ -88,6 +90,23 @@ void DisplayCMDUsage()
 
 }
 
+void readPara(){
+
+	//TODO: 打开m_cmdInfo[1] .para文件读参数值；
+	//开发阶段直接赋值；
+	para.quantMethod = 1;
+	para.input_spectra_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\Task1\\result\\test.spectra";
+	para.pf_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\iPRG_2012_HCDFT.pf2";
+	para.output_ratio_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\QuantRatio-ms2.pq2";
+
+	////test output
+	//cout << "quantMethod: " << para.quantMethod << endl;
+	//cout << "input_spectra_path: " << para.input_spectra_path << endl;
+	//cout << "pf_path: " << para.pf_path << endl;
+	//cout << "output_ratio_path: " << para.output_ratio_path << endl;
+
+}
+
 void readCmdline(const int argc, char* argv[]){
 
 	for (int arg_i = 0; arg_i < argc; arg_i++){
@@ -101,10 +120,10 @@ void readCmdline(const int argc, char* argv[]){
 		DisplayCMDUsage();
 	}
 	else if (argc == 2 && (stringProcess::bMatchingFix(argv[1], ".cfg", true, true) || stringProcess::bMatchingFix(argv[1], ".para", true, true))){
-	
-		RunFromFile(argv, *plog);
-	
+		//TODO: 读取参数文件；
+		readPara();
 	}
+
 
 
 
