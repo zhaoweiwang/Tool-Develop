@@ -23,25 +23,42 @@ typedef struct parainfo{
 
 	int quantMethod;				//1-3代表iTRAQ4、iTRAQ8、TMT
 	string input_spectra_path = "";	//pFind.spectra结果文件，作为输入文件；
-	string pf_path = "";			//pf2、pfidx文件路径；
+	string pf_path = "";			//pf2文件路径；
+	string pfidx_path = "";			//pf2idx文件路径;
 	string output_ratio_path = "";	//定量比值输出路径；
 
 }paraInfo;
 
+//谱峰
+typedef struct peakinfo{
+	vector<double> mz;
+	vector<double> iten;
+}peakInfo;
+
 //包含一个psm需要的全部信息
 typedef struct psminfo{
-	int		scan = 0;
-	double	score = 0.0;
-	double	spectra_mh = 0.0;
-	double	pep_mh = 0.0;
-	string	sq = "";
-	int		charge = 0;
-	double	mz = 0;
-	double	fdr = 0;
-	string	title = "";
-	string	prosandCons = "";//正库or反库
-	vector<string> modify;
-	int cleaves = 0;
+
+	string	title			= "";
+	int		scan			= 0;
+	double	mass1			= 0.0;
+	int		charge			= 0;
+	double	fdr				= 0.0;
+	string	pepSq			= "";
+	double	mass2			= 0.0;
+	double  massGapDa		= 0.0;
+	double  massGapPpm		= 0.0;
+	double	score			= 0.0;
+	string  modification	= "";
+	string	proAc			= "";
+	string	prosandCons		= "";
+	double	spectra_mh		= 0.0;
+	double	pep_mh			= 0.0;
+	
+	int		pf2Pos			= 0;
+
+	int		peakNums		= 0;
+	vector<double> peaksInfo;
+
 
 }psmInfo;
 
