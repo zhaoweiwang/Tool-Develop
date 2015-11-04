@@ -221,6 +221,9 @@ namespace wiff
             {
                 writer.WriteLine(mz[i].ToString("F5") + "\t" + intensity[i]);
             }
+            if(scan == )
+                for(int i = 0; i < mz.Count; i++)
+                    Console.WriteLine(mz[i] + " " + intensity[i]);
         }
 
         public void WriteMGF(WiffFile wifffile, StreamWriter writer)

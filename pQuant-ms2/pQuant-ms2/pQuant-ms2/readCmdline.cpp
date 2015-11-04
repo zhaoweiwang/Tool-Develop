@@ -95,10 +95,15 @@ void readPara(){
 	//TODO: 打开m_cmdInfo[1] .para文件读参数值；
 	//开发阶段直接赋值；
 	para.quantMethod = 1;
-	para.input_spectra_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\Task1\\result\\test.spectra";
+	para.input_spectra_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\Task1\\result\\pFind.spectra";
 	para.pf_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\iPRG_2012_HCDFT.pf2";
 	para.pfidx_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\iPRG_2012_HCDFT.pf2idx";
 	para.output_ratio_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\QuantRatio-ms2.pq2";
+
+	//para.input_spectra_path = "H:\\3-database\\11月4号\\pFind.spectra";
+	//para.pf_path = "H:\\3-database\\11月4号\\JD_06232014_sample1_A_HCDFT.pf2";
+	//para.pfidx_path = "H:\\3-database\\11月4号\\JD_06232014_sample1_A_HCDFT.pf2idx";
+	//para.output_ratio_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\QuantRatio-ms2.pq2";
 
 	////test output
 	//cout << "quantMethod: " << para.quantMethod << endl;

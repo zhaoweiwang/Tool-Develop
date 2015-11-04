@@ -13,6 +13,7 @@
 #include <vector>
 #include <ctime>
 #include <stdio.h>
+#include <unordered_map>
 #include "stringProcess.h"
 
 using namespace std;
@@ -31,8 +32,8 @@ typedef struct parainfo{
 
 //谱峰
 typedef struct peakinfo{
-	vector<double> mz;
-	vector<double> iten;
+	double mz;
+	double iten;
 }peakInfo;
 
 //包含一个psm需要的全部信息
@@ -51,17 +52,35 @@ typedef struct psminfo{
 	string  modification	= "";
 	string	proAc			= "";
 	string	prosandCons		= "";
-	double	spectra_mh		= 0.0;
-	double	pep_mh			= 0.0;
 	
 	int		pf2Pos			= 0;
 
 	int		peakNums		= 0;
-	vector<double> peaksInfo;
+	vector<peakInfo> peaks;
 
+	//TODO: 利用继承派生出各种定量方法类
 
 }psmInfo;
 
+class A{
+
+public:
+	int a = 1;
+	void showInfo(){
+		cout << "This is " << this->a << endl;
+	}
+
+};
+
+class B : public A{
+
+public:
+	int b = 2;
+	void showInfo(){
+		cout << "This is " << this->b << endl;
+	}
+	//in this case, class B also have int a menber;
+};
 
 //参数区
 const string TIMESTRING = "2015-10-26 16:00";
