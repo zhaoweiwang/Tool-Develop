@@ -22,11 +22,13 @@ using namespace std;
 
 typedef struct parainfo{
 
-	int quantMethod;				//1-3代表iTRAQ4、iTRAQ8、TMT
+	int quantMethod = 0;			//1-3代表iTRAQ4、iTRAQ8、TMT
+	double detaFragment = 0.0;		//搜索窗口大小	
 	string input_spectra_path = "";	//pFind.spectra结果文件，作为输入文件；
 	string pf_path = "";			//pf2文件路径；
 	string pfidx_path = "";			//pf2idx文件路径;
 	string output_ratio_path = "";	//定量比值输出路径；
+
 
 }paraInfo;
 
@@ -57,6 +59,8 @@ typedef struct psminfo{
 
 	int		peakNums		= 0;
 	vector<peakInfo> peaks;
+
+	vector<double> reporter;
 
 	//TODO: 利用继承派生出各种定量方法类
 
