@@ -13,11 +13,11 @@ int main(int argc, char* argv[]){
 
 	printLogo();				//打印logo；
 
-	checkDate();				//检查软件是否过期；
+	checkDate(2016,1,31);	    //检查软件是否过期；
 
-	readCmdline(argc, argv);	//通过读取命令行or文件获取用户设置参数；
+	readCmdline(argc, argv);	//通过读取 [命令行] 或 [参数文件] 获取软件参数设置；
 
-	readData();					//获取谱图信息；
+	//readData();					//获取谱图信息；
 
 	return 0;
 }

@@ -128,13 +128,13 @@ void readPsms(){
 			psm.pepSq = tempPsm.substr(t_pos[4] + 1, t_pos[5] - t_pos[4] - 1);
 			psm.mass2 = atof(tempPsm.substr(t_pos[5] + 1, t_pos[6] - t_pos[5] - 1).c_str());
 			psm.massGapDa = atof(tempPsm.substr(t_pos[6] + 1, t_pos[7] - t_pos[6] - 1).c_str());
-			psm.massGapPpm = atof(tempPsm.substr(t_pos[7] + 1, t_pos[8] - t_pos[7] - 1).c_str());	
+			psm.massGapPpm = atof(tempPsm.substr(t_pos[7] + 1, t_pos[8] - t_pos[7] - 1).c_str());
 			psm.score = atof(tempPsm.substr(t_pos[8] + 1, t_pos[9] - t_pos[8] - 1).c_str());
 			psm.modification = tempPsm.substr(t_pos[9] + 1, t_pos[10] - t_pos[9] - 1);
 			psm.proAc = tempPsm.substr(t_pos[11] + 1, t_pos[12] - t_pos[11] - 1);
 			psm.prosandCons = tempPsm.substr(t_pos[14] + 1, t_pos[15] - t_pos[14] - 1);
 			psm.pf2Pos = mapScanPos[psm.scan];
-			
+
 			//cout << psm.title << endl;
 			//cout << psm.scan << endl;
 			//cout << psm.mass1 << endl;
@@ -173,29 +173,29 @@ void readPf2(){
 	}
 
 	for (int i = 1; i < psmVec.size(); i++){
-	
+
 		//cout << psmVec[i].scan << endl;
 		input_pf2.seekg(psmVec[i].pf2Pos + sizeof(int), ios::beg);
 		input_pf2.read((char*)&psmVec[i].peakNums, sizeof(int));
 		//cout << psmVec[i].peakNums << endl;
 		//getchar();
 		for (int j = 0; j < psmVec[i].peakNums; j++){
-		
+
 			peakInfo tempPeak;
 			input_pf2.read((char*)&tempPeak.mz, sizeof(double));
 			input_pf2.read((char*)&tempPeak.iten, sizeof(double));
 			//cout << tempPeak.mz << " " << tempPeak.iten << endl;
 			//getchar();
 			psmVec[i].peaks.push_back(tempPeak);
-		
+
 		}
-	
+
 	}
 	cout << "Successfully read " << para.pf_path << endl;
 }
 
 void getReporter(){
-	
+
 	if (para.quantMethod > 0 && para.quantMethod < 4){
 		cout << "\nStep4: Get " << reType[para.quantMethod - 1] << " reporter-ion`s intensity." << endl;
 	}
@@ -211,12 +211,12 @@ void getReporter(){
 		for (int i = 0; i < psmVec.size(); i++){
 
 			for (int j = 0; j < iTRAQ4.size(); j++){
-			
+
 				double minDis = 10000.0;
 				int minDisIdx = -1;
 
 				for (int k = 0; k < psmVec[i].peaks.size(); k++){
-				
+
 					if (fabs((iTRAQ4[j] - psmVec[i].peaks[k].mz)) < para.detaFragment*iTRAQ4[j]){
 						minDisIdx = k;
 						if (minDis > fabs(iTRAQ4[j] - psmVec[i].peaks[k].mz)){
@@ -228,7 +228,7 @@ void getReporter(){
 					if (psmVec[i].peaks[k].mz > iTRAQ4[j]+2){
 						break;
 					}
-				
+
 				}
 
 				if (-1 == minDisIdx)
@@ -259,25 +259,25 @@ void getReporter(){
 
 }
 
-void correctIsotopeImpurities(){
-
-	vector<double> newReport;
-	for (int i = 0; i < psmVec.size(); i++){
-	
-		for (int j = 0; j < psmVec[i].reporter.size(); j++){
-		
-			if (psmVec[i].reporter[j] > 0){
-			
-				for (int k = 0; k < psmVec[i].reporter.size(); k++)
-					 += ps
-			
-			}
-		
-		}
-	
-	}
-
-}
+//void correctIsotopeImpurities(){
+//
+//	vector<double> newReport;
+//	for (int i = 0; i < psmVec.size(); i++){
+//
+//		for (int j = 0; j < psmVec[i].reporter.size(); j++){
+//
+//			if (psmVec[i].reporter[j] > 0){
+//
+//				for (int k = 0; k < psmVec[i].reporter.size(); k++)
+//					 += ps
+//
+//			}
+//
+//		}
+//
+//	}
+//
+//}
 
 void readData(){
 
@@ -294,7 +294,7 @@ void readData(){
 	getReporter();
 
 	//Step5: 矫正工作；
-	correctIsotopeImpurities();
+	//correctIsotopeImpurities();
 
 
 }

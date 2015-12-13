@@ -44,9 +44,6 @@ namespace wiff
         {
             return new WiffFile(wiffpath);
         }
-
-
-
         //这四个数据结构都是AB提供的API
         public AnalystWiffDataProvider provider;
         public Batch m_batch;
@@ -107,9 +104,6 @@ namespace wiff
             return GetSampleNames().Count;
         }
     }
-
-
-
     class Spectrum
     {
      //   public int experimentCount;
@@ -182,7 +176,7 @@ namespace wiff
             writer.WriteLine("{0} {1}", "H\tCreationDate\t", localtime);
             writer.WriteLine("{0} {1}", "H\tExtractor\t", "wiff");
             writer.WriteLine("{0} {1}", "H\tExtractorVersion\t", "1.0.0.1");
-            writer.WriteLine("{0} {1}", "H\tComments\t", "Owned by pFind Studio, 2015");
+            writer.WriteLine("{0} {1}", "H\tComments\t", "Owned by pFind Studio, 2014");
             writer.WriteLine("{0} {1}", "H\tDataType\t", (para.cent == true) ? "Centroid" : "Profile");
         }
 
@@ -194,9 +188,33 @@ namespace wiff
             writer.WriteLine("I\tRetTime\t" + this.retentionTime);
             writer.WriteLine("I\tIonInjectionTime\t" + (this.m_spectrumInfo.EndRT - this.m_spectrumInfo.StartRT));
             writer.WriteLine("I\tInstrumentType\tQTOF");
+
+            //去噪，统计频率最高的谱峰，不输出
+            Dictionary<int, int> dic = new Dictionary<int, int>();
+            for (int i = 0; i < mz.Count; i++)
+            {
+                if (dic.ContainsKey((int)this.intensity[i]))
+                    dic[(int)this.intensity[i]] += 1;
+                else
+                    dic.Add((int)this.intensity[i], 1);
+            }
+            int[] mostInten = new int[4];
+            int countMost = 0;
+            var aaaa = dic.OrderByDescending(a => a.Value);         //按照value降序排序；
+            foreach (KeyValuePair<int, int> a in aaaa)
+            {
+                //Console.WriteLine(a.Key + " " + a.Value);
+                mostInten[countMost++] = a.Key;
+                if (countMost == 3)
+                    break;
+            }
+            //Console.WriteLine(mostInten[0] + " " + mostInten[1] + " " + mostInten[2]);
+            //Console.Read();
+
             for (int i = 0; i < this.mz.Count; ++i)
             {
-                writer.WriteLine(this.mz[i].ToString("F5") + "\t" + this.intensity[i]);
+                if ((int)this.intensity[i] != mostInten[0] && (int)this.intensity[i] != mostInten[1] && (int)this.intensity[i] != mostInten[2])
+                    writer.WriteLine(this.mz[i].ToString("F5") + "\t" + this.intensity[i]);
             }
         }
 
@@ -217,32 +235,82 @@ namespace wiff
                 writer.WriteLine("Z\t0\t0");
             else
                 writer.WriteLine("Z\t" + this.charge + "\t" + (this.precursor_mz * this.charge - (this.charge - 1) * 1.007276));
+
+            //去噪，统计频率最高的谱峰，不输出
+            Dictionary<int, int> dic = new Dictionary<int, int>();
+            for (int i = 0; i < mz.Count; i++)
+            {
+                if (dic.ContainsKey((int)intensity[i]))
+                    dic[(int)intensity[i]] += 1;
+                else
+                    dic.Add((int)intensity[i], 1);
+            }
+            //int mostInten = 0;
+            int[] mostInten = new int[4];
+            int countMost = 0;
+            var aaaa = dic.OrderByDescending(a => a.Value);         //按照value降序排序；
+            foreach (KeyValuePair<int, int> a in aaaa)
+            {
+                //Console.WriteLine(a.Key + " " + a.Value);
+                mostInten[countMost++] = a.Key;
+                if(countMost == 2)
+                    break;
+            }
+            //Console.WriteLine(mostInten[0] + " " + mostInten[1] + " " + mostInten[2]);
+            //Console.Read();
+
+
             for (int i = 0; i < mz.Count; ++i)
             {
-                writer.WriteLine(mz[i].ToString("F5") + "\t" + intensity[i]);
+                if ((int)intensity[i] != mostInten[0] && (int)intensity[i] != mostInten[1])
+                    writer.WriteLine(mz[i].ToString("F5") + "\t" + intensity[i]);
             }
-            if(scan == )
-                for(int i = 0; i < mz.Count; i++)
-                    Console.WriteLine(mz[i] + " " + intensity[i]);
         }
 
         public void WriteMGF(WiffFile wifffile, StreamWriter writer)
         {
-            string title = wifffile.name + "." + scan + "." + scan + "." + "0.dta";
+            string title = wifffile.name + "." + scan + "." + scan + "." + "2.0.dta";
             writer.WriteLine("BEGIN IONS");
             writer.WriteLine("TITLE=" + title);
-            string wifftitle = "Locus:" + "1.1.1." + this.cycle + "." + this.experiment;
-            writer.WriteLine("WIFFTITILE=" + wifftitle);
-            if (this.charge != 0)
-            {
-                writer.WriteLine("CHARGE=" + this.charge + "+");
-            }
+            //string wifftitle = "Locus:" + "1.1.1." + this.cycle + "." + this.experiment;
+            //writer.WriteLine("WIFFTITILE=" + wifftitle);
+            //if (this.charge != 0)
+            //{
+            //    writer.WriteLine("CHARGE=" + this.charge + "+");
+            //}
+            writer.WriteLine("CHARGE=2+");
             writer.WriteLine("RTINSECONDS=" + this.retentionTime.ToString("F6"));
             writer.WriteLine("PEPMASS=" + this.precursor_mz.ToString("G10"));
 
+            //去噪，统计频率最高的谱峰，不输出
+            Dictionary<int, int> dic = new Dictionary<int, int>();
+            for (int i = 0; i < mz.Count; i++)
+            {
+                if (dic.ContainsKey((int)intensity[i]))
+                    dic[(int)intensity[i]] += 1;
+                else
+                    dic.Add((int)intensity[i], 1);
+            }
+
+            //int mostInten = 0;
+            int[] mostInten = new int[4];
+            int countMost = 0;
+            var aaaa = dic.OrderByDescending(a => a.Value);         //按照value降序排序；
+            foreach (KeyValuePair<int, int> a in aaaa)
+            {
+                //Console.WriteLine(a.Key + " " + a.Value);
+                mostInten[countMost++] = a.Key;
+                if (countMost == 2)
+                    break;
+            }
+            //Console.WriteLine(mostInten[0] + " " + mostInten[1] + " " + mostInten[2]);
+            //Console.Read();
+
+            //输出，但避开强度频率最高的峰
             for (int i = 0; i < mz.Count; ++i)
             {
-                writer.WriteLine(mz[i].ToString("F5") + " " + intensity[i]);
+                if ((int)intensity[i] != mostInten[0] && (int)intensity[i] != mostInten[1])
+                    writer.WriteLine(mz[i].ToString("F5") + "\t" + intensity[i]);
             }
             writer.WriteLine("END IONS\n");
         }

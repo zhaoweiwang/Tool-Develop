@@ -31,14 +31,11 @@ namespace wiff
         {
             string error1 = "[wiff] <Exception>: Failed to find file ";
             string error2 = "[wiff] <Exception>: Warning: No wiff files.";
-
             for (int i = 0; i < inFiles.Count(); i++)
             {
                 //判断为单个文件还是路径
-                //Console.WriteLine(inFiles[i]);
                 if (!Directory.Exists(inFiles[i]) && !File.Exists(inFiles[i]))
                 {
-                    //Console.WriteLine("哈");
                     //既不是文件也不是路径，退出
                     Console.WriteLine("{0} {1}", error1, inFiles[i]);
                     Environment.Exit(0);
@@ -46,7 +43,6 @@ namespace wiff
                 }
                 else if (File.Exists(inFiles[i]))
                 {
-                    //Console.WriteLine("哈哈");
                     //是文件，检查是否以 wiff结尾
                     FileInfo fi = new FileInfo(inFiles[i]);
                     if (fi.Extension.ToUpper().CompareTo(".WIFF") == 0)
@@ -56,7 +52,6 @@ namespace wiff
                 }
                 else if (Directory.Exists(inFiles[i]))
                 {
-                    //Console.WriteLine("哈哈哈");
                     //是路径，检查路径中是否有 wiff结尾
                     bool haswiff = false;
                     DirectoryInfo folder = new DirectoryInfo(inFiles[i]);
@@ -146,16 +141,6 @@ namespace wiff
                     showHelpInformation();
                     return;
                 }
-
-                //for (int i = 0; i < args.Length; i++)
-                //{
-
-                //    Console.WriteLine(args[i]);
-
-                //}
-                //Console.Read();
-
-
                 for (int i = 0; i < args.Length; i++)
                 {
                     if (args[i][0] == '-')
@@ -203,10 +188,6 @@ namespace wiff
                     }
                     else
                     {
-                        //Console.WriteLine(args[i]);
-                        //Console.WriteLine(args[i].ToString());
-                        //Console.WriteLine("e....");
-                        //Console.WriteLine("haha");
                         tmpinput.Add(args[i].ToString());
                         //要处理的原始文件 路径和文件两种写法
                     }
@@ -219,15 +200,6 @@ namespace wiff
                 //Application.Exit();
                 //命令行异常  退出程序
             }
-
-            //for (int i = 0; i < tmpinput.Count; i++) {
-
-            //    Console.WriteLine(tmpinput[i]);
-            
-            //}
-            //Console.Read();
-
-
             if (this.ms1 == 0 && this.ms2 == 0 && this.mgf == 0)
                 this.mgf = 1;
             checkOutputPath();

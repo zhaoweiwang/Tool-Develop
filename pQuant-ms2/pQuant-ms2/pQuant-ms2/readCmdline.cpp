@@ -5,16 +5,18 @@ const string Version = "-Release-1.0.0";
 
 parainfo para;
 
+
 void WhatsNew()
 {
 	cout << "What's New:" << endl;
-	cout << "\t[2013.12.28] Upgrade: Up to iTRAQ4/8 && TMT are available. " << endl;
+	cout << "\t[2015.12.01] Upgrade: Up to iTRAQ4/8 && TMT are available. " << endl;
+	cout << "\t[2015.12.08] Upgrade: Up to correct isotope impurities is available. " << endl;
 
 }
 
 void printVersion()
 {
-	cout << "pQuant-ms2 Version" << Version << endl << endl;;
+	cout << "\t         pQuant-ms2 Version" << Version << endl << endl;;
 	WhatsNew();
 }
 
@@ -22,36 +24,52 @@ void Usage()
 {
 	cout << endl;
 	cout << "Usage via config files:" << endl;
-	cout << "\tpQuant-ms2.exe pQuant-ms2.para" << endl << endl;;
+	cout << "\tpQuant-ms2.exe pQuant-ms2.para" << endl;
 }
 
 void GeneratedParamTemplate()
 {
-	FILE *pfile;
-	pfile = fopen("pQuant-ms2.para", "r");
+	string paraFileName = "";
+	time_t tTemp = time(nullptr);
+	tm* timeLocal = localtime(&tTemp);
+
+	int year = timeLocal->tm_year + 1900;
+	int month = timeLocal->tm_mon + 1;
+	int day = timeLocal->tm_mday;
+	int hour = timeLocal->tm_hour;
+	int min = timeLocal->tm_min;
+	int second = timeLocal->tm_sec;
+
+	paraFileName = "pQuant-ms2_" + to_string(year) + to_string(month) + to_string(day) + to_string(hour) + to_string(min) + to_string(second) + ".para";
+
+	FILE* pfile;
+	pfile = fopen(paraFileName.c_str(), "r");
 	if (pfile != NULL)
 	{
-		cerr << "pQuant-ms.para already exists." << endl;
 		fclose(pfile);
 		return;
 	}
 
-	pfile = fopen("pQuant-ms2.para", "w");
-	fprintf(pfile, "# pQuant-ms2.para template\n");
+	pfile = fopen(paraFileName.c_str(), "w");
+	fprintf(pfile, "# pQuant-ms2.para params template\n");
 	fprintf(pfile, "# For help: mail to wangzhaowei@ict.ac.cn \n");
 	fprintf(pfile, "# Time: 2015.10.27\n\n");
 
 	fprintf(pfile, "[Basic Options]\n");
-	fprintf(pfile, "datapath=E:\\Data\\\n\n");
+	fprintf(pfile, "spectraDatapath = D:\\pFindWorkspace\\\n");
+	fprintf(pfile, "pfDatapath = D:\\DataSet\\\n");
+	fprintf(pfile, "quantResultDatapath = D:\\DataSet\\\n\n");
 
 	fprintf(pfile, "[Advanced Options]\n");
-	fprintf(pfile, "co-elute=1\n");
-	fprintf(pfile, "# 0, output single precursor for single scan;\n");
-	fprintf(pfile, "# 1, output all co-eluted precursors.\n");
-	fprintf(pfile, "input_format=raw\n");
-	fprintf(pfile, "# raw / ms1\n");
-	fprintf(pfile, "isolation_width=2\n");
-	fprintf(pfile, "# 2 / 2.5 / 3 / 4\n");
+	fprintf(pfile, "quantitativeMethod = 0\n");
+	fprintf(pfile, "# 0, quantitative method: iTRAQ-4plex;\n");
+	fprintf(pfile, "# 1, quantitative method: iTRAQ-8plex;\n");
+	fprintf(pfile, "# 1, quantitative method: TMT-6plex.\n");
+	fprintf(pfile, "reporterIonMZ = 114.110, 115.110, 116.110, 117.110\n");
+	fprintf(pfile, "# you could customize the reporter ion M/Z.\n");
+	fprintf(pfile, "# e.g. iTRAQ-4plex: 114.110, 115.110, 116.110, 117.110.\n");
+	fprintf(pfile, "FTMS = 20ppm\n");
+	fprintf(pfile, "# a fragment mass tolerance was set by yourself, which default is 20 ppm.\n");
 
 	fclose(pfile);
 }
@@ -74,26 +92,101 @@ void printHelpInfo(){
 
 void DisplayCMDUsage()
 {
-	cout << "\n========== Welcome to try pQuant-ms2 Switches! ===========" << endl;
-	cout << "Usage via command options:" << endl << endl;
-	cout << "\tpQuant-ms2.exe -D D:\\Dataset\\1.raw" << endl << endl;
-	cout << "Or" << endl << endl;
-	cout << "\tpParse.exe -D D:\\Dataset\\" << endl << endl;
+	cout << "\t=================================================" << endl;
+	cout << "\t===    Welcome to try pQuant-ms2 Switches!    ===" << endl;
+	cout << "\t=================================================" << endl;
+	cout << "\nUsage via command options:" << endl;
+	cout << "\tpQuant-ms2.exe -D D:\\pFindWorkspace\\pFind.spectra -P D:\\DataSet\\data.pf2" << endl;
+	cout << "Or" << endl;
+	cout << "\tpQuant-ms2.exe -D D:\\pFindWorkspace\\ -P D:\\DataSet\\" << endl;
 	cout << endl;
 	cout << "More Options:" << endl;
-	cout << "\t-D datapath               default (D:\\data\\)" << endl;
-	cout << "\t-L logfilepath            default (the same with datapath)" << endl;
-	cout << "\t-O outputpath             default (the same with datapath)" << endl;
-	cout << "\t-W isolation_width        default (2) " << endl;
-	cout << "\t-F input_format           default (raw) " << endl;
-	cout << "\t-C co-elute               default (1)" << endl;
+	cout << "\t-D pFind.Spectra datapath   default (D:\\pFindWorkspace\\)" << endl;
+	cout << "\t-P .pf file datapath        default (D:\\DataSet\\)" << endl;
+	cout << "\t-O result file outputpath   default (the same with datapath)" << endl;
+	cout << "\t-W fragment mass tolerance  default (20 ppm) " << endl;
+	cout << "\t-M quantitative method      default (0) " << endl;
+	cout << "\t-R reporter ion M/Z         default (114.110, 115.110, 116.110, 117.110)" << endl;
+}
+
+void InitializePara(){
+	para.binPath = ".\\";
+	para.input_spectra_path = "D:\\pFindWorkspace\\";		//pFind工作目录下的pFind.spectra路径
+	para.pfidx_path = "D:\\DataSet\\";						//数据存放目录下pParse导出的pf2idx路径
+	para.pf_path = "D:\\DataSet\\";							//数据存放目录下pParse导出的pf2路径
+	para.pf1idx_path = "D:\\DataSet\\";						//数据存放目录下pParse导出的pf1idx路径
+	para.pf1_path = "D:\\DataSet\\";						//数据存放目录下pParse导出的pf1路径
+	para.output_ratio_path = "D:\\DataSet\\";				//计算结果的导出路径
+	para.quantMethod = 0;									//定量方法的选择，default = 0, iTRAQ-4plex
+	para.detaFragment = 20.0;								//Reporter Ion的窗口大小
+}
+
+void setBinPath(char* argv[]){								// The path of pParse.exe. Extract the path from argv[0]
+	string binPath = argv[0];
+	int found = binPath.find_last_of("/\\");
+	if (found != string::npos)	para.binPath = binPath.substr(0, found + 1);
+}
+
+void Trim(string str){
+	int found = str.find_last_not_of(' ');
+	if (found != string::npos)
+		str = str.substr(found);
+	else
+		throw "pQuant-ms2 found invalid key in config file!";
+	found = str.find_first_not_of(' ');
+	if (found != string::npos)
+		str = str.substr(0, found + 1);
+	else
+		throw "pQuant-ms2 found invalid key in config file!";
+}
+
+void checkPara(){
+
 
 }
 
-void readPara(){
+void readPara(char* argv[]){								//打开m_cmdInfo[1] .para文件读参数值；
+	
+	InitializePara();										//初始化配置文件参数；
 
-	//TODO: 打开m_cmdInfo[1] .para文件读参数值；
-	//开发阶段直接赋值；
+	ifstream fin;
+	fin.open(argv[1], ios::in);
+	if (!fin.good()){
+		string inFo = "The File \"";
+		inFo += argv[1];
+		inFo += "\" dose not exist!";
+		screenInfo pS;
+		pS.printInfoTo(cout, "Error", inFo);
+		throw inFo;
+	}
+
+	char strTemp[256];
+	string str = "";
+	map<string, string> param;									//先存到map里，再格式化存在para中；
+	while (!fin.eof()){
+		fin.getline(strTemp, 256);
+		str = strTemp;
+		if (str == "" || str[0] == '#' || str[0] == ';' || str[0] == '[')	continue;
+		int pos = str.find('=');
+		string forward;
+		string backward;
+		forward = str.substr(0, pos);
+		backward = str.substr(pos + 2, str.size());
+		Trim(forward);
+		Trim(backward);
+		param[forward] = backward;
+	}
+
+	para.input_spectra_path = param["spectraDatapath"];
+	para.pfidx_path = param["pfDatapath"];
+	para.pf_path = param[""];
+
+	setBinPath(argv);
+	checkPara();
+	
+	char* paraFileName = argv[1];
+	
+
 	para.quantMethod = 1;
 	para.detaFragment = 200.0*0.000001;
 	para.input_spectra_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\Task1\\result\\pFind.spectra";
@@ -101,26 +194,16 @@ void readPara(){
 	para.pfidx_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\iPRG_2012_HCDFT.pf2idx";
 	para.output_ratio_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\QuantRatio-ms2.pq2";
 
-	//para.input_spectra_path = "H:\\3-database\\11月4号\\pFind.spectra";
-	//para.pf_path = "H:\\3-database\\11月4号\\JD_06232014_sample1_A_HCDFT.pf2";
-	//para.pfidx_path = "H:\\3-database\\11月4号\\JD_06232014_sample1_A_HCDFT.pf2idx";
-	//para.output_ratio_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\QuantRatio-ms2.pq2";
-
-	para.input_spectra_path = "H:\\3-database\\8_27\\iTRAQ_4_open_without_mTRAQ\\Task1\\result\\pFind.spectra";
-	para.pf_path = "H:\\3-database\\iTRAQ_Sheng\\raw\\20110915_iTRAQ_4plex_GK_6ug_Exp_3_HCDFT.pf2";
-	para.pfidx_path = "H:\\3-database\\iTRAQ_Sheng\\raw\\20110915_iTRAQ_4plex_GK_6ug_Exp_3_HCDFT.pf2idx";
-
-
-
-	////test output
-	//cout << "quantMethod: " << para.quantMethod << endl;
-	//cout << "input_spectra_path: " << para.input_spectra_path << endl;
-	//cout << "pf_path: " << para.pf_path << endl;
-	//cout << "output_ratio_path: " << para.output_ratio_path << endl;
-
 }
 
+//void readCmd(){
+//
+//}
+
 void readCmdline(const int argc, char* argv[]){
+
+	int start = clock();		//计时器
+
 
 	for (int arg_i = 0; arg_i < argc; arg_i++){
 		m_cmdInfo.push_back(argv[arg_i]);
@@ -133,11 +216,12 @@ void readCmdline(const int argc, char* argv[]){
 		DisplayCMDUsage();
 	}
 	else if (argc == 2 && (stringProcess::bMatchingFix(argv[1], ".cfg", true, true) || stringProcess::bMatchingFix(argv[1], ".para", true, true))){
-		//TODO: 读取参数文件；
-		readPara();
+		readPara(argv);
+	}
+	else{
+		//readCmd();
 	}
 
-
-
-
+	int seconds = (clock() - start) / CLOCKS_PER_SEC;
+	cout << "== == == Time elapsed: " << seconds << " seconds. == == ==" << endl;
 }

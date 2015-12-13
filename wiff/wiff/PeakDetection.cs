@@ -555,7 +555,7 @@ namespace wiff
         private static bool IsValidProfileMS1(List<double> profilemz, List<double> profileint, int minInd, int maxInd)
         {
             //说不定可以用一下
-            if (maxInd - minInd >= 3) return true;
+            if (maxInd - minInd >= 0) return true;
             return false;
         }
     }

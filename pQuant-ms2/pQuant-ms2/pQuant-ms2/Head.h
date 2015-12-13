@@ -14,6 +14,7 @@
 #include <ctime>
 #include <stdio.h>
 #include <unordered_map>
+#include <map>
 #include "stringProcess.h"
 
 using namespace std;
@@ -22,12 +23,18 @@ using namespace std;
 
 typedef struct parainfo{
 
-	int quantMethod = 0;			//1-3代表iTRAQ4、iTRAQ8、TMT
-	double detaFragment = 0.0;		//搜索窗口大小	
-	string input_spectra_path = "";	//pFind.spectra结果文件，作为输入文件；
-	string pf_path = "";			//pf2文件路径；
-	string pfidx_path = "";			//pf2idx文件路径;
-	string output_ratio_path = "";	//定量比值输出路径；
+	string binPath = ".\\";
+
+	int quantMethod = 0;						//1-3代表iTRAQ4、iTRAQ8、TMT
+	double detaFragment = 0.0;					//搜索窗口大小
+	vector<double> reporterMZ;
+
+	string input_spectra_path = "";				//pFind.spectra结果文件，作为输入文件；
+	string pf_path = "";						//pf2文件路径；
+	string pfidx_path = "";						//pf2idx文件路径;
+	string pf1_path = "";
+	string pf1idx_path = "";
+	string output_ratio_path = "";				//定量比值输出路径；
 
 
 }paraInfo;
@@ -65,6 +72,12 @@ typedef struct psminfo{
 	//TODO: 利用继承派生出各种定量方法类
 
 }psmInfo;
+
+class screenInfo{
+public:
+	void printInfoTo(ostream& output, string infoType, string inFo);
+	string getTimeStr();
+};
 
 class A{
 
@@ -106,12 +119,12 @@ void printLogo();
 输入：	无
 返回：	无
 */
-void checkDate();
+void checkDate(int year, int month, int day);
 
 /*
 函数名：	readCmdline
 功能：	读取cmd命令行；
-输入：	无
+输入：	年月日
 返回：	无
 */
 void readCmdline(const int argc, char* argv[]);
