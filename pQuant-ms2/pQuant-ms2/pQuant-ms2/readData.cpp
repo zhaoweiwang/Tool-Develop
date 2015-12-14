@@ -185,6 +185,7 @@ void getReporter(){
 					psmVec[i].reporter.push_back(psmVec[i].peaks[minDisIdx].iten * 0.1);
 			}
 
+			//输出测试
 			cout << psmVec[i].title << endl;
 			cout << "reporter: " << endl;
 			for (int l = 0; l < psmVec[i].reporter.size(); l++)
