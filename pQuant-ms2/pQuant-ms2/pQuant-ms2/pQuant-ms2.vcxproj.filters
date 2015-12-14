@@ -44,5 +44,8 @@
     <ClInclude Include="stringProcess.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
+    <ClInclude Include="dirent.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

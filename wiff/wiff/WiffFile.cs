@@ -264,6 +264,8 @@ namespace wiff
             {
                 if ((int)intensity[i] != mostInten[0] && (int)intensity[i] != mostInten[1])
                     writer.WriteLine(mz[i].ToString("F5") + "\t" + intensity[i]);
+                else if((int)intensity[i] == 114 || (int)intensity[i] == 115 || (int)intensity[i] == 116 || (int)intensity[i] == 117)
+                    writer.WriteLine(mz[i].ToString("F5") + "\t" + intensity[i]);
             }
         }
 

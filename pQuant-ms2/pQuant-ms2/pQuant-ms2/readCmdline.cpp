@@ -5,6 +5,8 @@ const string Version = "-Release-1.0.0";
 
 parainfo para;
 
+const bool DO_NOT_DISPLAY = false;
+
 
 void WhatsNew()
 {
@@ -111,14 +113,15 @@ void DisplayCMDUsage()
 
 void InitializePara(){
 	para.binPath = ".\\";
-	para.input_spectra_path = "D:\\pFindWorkspace\\";		//pFind工作目录下的pFind.spectra路径
-	para.pfidx_path = "D:\\DataSet\\";						//数据存放目录下pParse导出的pf2idx路径
-	para.pf_path = "D:\\DataSet\\";							//数据存放目录下pParse导出的pf2路径
-	para.pf1idx_path = "D:\\DataSet\\";						//数据存放目录下pParse导出的pf1idx路径
-	para.pf1_path = "D:\\DataSet\\";						//数据存放目录下pParse导出的pf1路径
-	para.output_ratio_path = "D:\\DataSet\\";				//计算结果的导出路径
-	para.quantMethod = 0;									//定量方法的选择，default = 0, iTRAQ-4plex
-	para.detaFragment = 20.0;								//Reporter Ion的窗口大小
+	para.input_spectra_path = "D:\\pFindWorkspace\\";			//pFind工作目录下的pFind.spectra路径
+	para.pfidx_path = "D:\\DataSet\\";							//数据存放目录下pParse导出的pf2idx路径
+	para.pf_path = "D:\\DataSet\\";								//数据存放目录下pParse导出的pf2路径
+	para.pf1idx_path = "D:\\DataSet\\";							//数据存放目录下pParse导出的pf1idx路径
+	para.pf1_path = "D:\\DataSet\\";							//数据存放目录下pParse导出的pf1路径
+	para.output_ratio_path = "D:\\DataSet\\";					//计算结果的导出路径
+	para.quantMethod = 0;										//定量方法的选择，default = 0, iTRAQ-4plex
+	para.detaFragment = 20.0;									//Reporter Ion的窗口大小
+	para.reporterMZ = { 114.110, 115.110, 116.110, 117.110 };	//存放reporter Ion对应的的MZ，默认是iTRAQ4
 }
 
 void setBinPath(char* argv[]){								// The path of pParse.exe. Extract the path from argv[0]
@@ -140,10 +143,45 @@ void Trim(string str){
 		throw "pQuant-ms2 found invalid key in config file!";
 }
 
-void checkPara(){
-
-
+bool isPath(string strpath){
+	DIR* p = opendir(strpath.c_str());
+	if (p == NULL)	return false;
+	else{
+		closedir(p);
+		return true;
+	}
 }
+
+void displayPara(){
+	if (DO_NOT_DISPLAY)	return;
+
+	int paraCount = 1;
+
+	cout << "\t       --------- BEGIN PARAMETERS ---------" << endl << endl;
+	cout << "[" << paraCount++ << "]" << ": " << "spectraDatapath" << " = " << para.input_spectra_path << endl;
+	cout << "[" << paraCount++ << "]" << "pf2Indexpath" << " = " << para.pfidx_path << endl;
+	cout << "[" << paraCount++ << "]" << ": " << "pf2path" << " = " << para.pf_path << endl;
+	cout << "[" << paraCount++ << "]" << ": " << "pf1Indexpath" << " = " << para.pf1idx_path << endl;
+	cout << "[" << paraCount++ << "]" << ": " << "pf1path" << " = " << para.pf1_path << endl;
+	cout << "[" << paraCount++ << "]" << ": " << "quantResultDatapath" << " = " << para.output_ratio_path << endl;
+	cout << "[" << paraCount++ << "]" << ": " << "quantitativeMethod" << " = " << para.quantMethod << endl;
+	cout << "[" << paraCount++ << "]" << ": " << "FTMS" << " = " << para.detaFragment << endl;
+	
+	cout << "[" << paraCount++ << "]" << ": " << "reporterIonMZ" << " =";
+	for (int i = 0; i < para.reporterMZ.size(); i++) cout << " " << para.reporterMZ[i];
+	cout << endl << endl;
+	cout << "\t       --------- END PARAMETERS -----------" << endl << endl;
+}
+
+//void checkPara(){											//读取参数后的判断步骤；
+//	if (isPath(para.input_spectra_path)){
+//		if (para.input_spectra_path[para.input_spectra_path.size() - 1] != '\\')
+//			para.input_spectra_path += "\\";
+//	}
+//	else{
+//		
+//	}
+//}
 
 void readPara(char* argv[]){								//打开m_cmdInfo[1] .para文件读参数值；
 	
@@ -170,29 +208,37 @@ void readPara(char* argv[]){								//打开m_cmdInfo[1] .para文件读参数值
 		int pos = str.find('=');
 		string forward;
 		string backward;
-		forward = str.substr(0, pos);
+		forward = str.substr(0, pos-1);
 		backward = str.substr(pos + 2, str.size());
 		Trim(forward);
 		Trim(backward);
+
 		param[forward] = backward;
 	}
 
 	para.input_spectra_path = param["spectraDatapath"];
-	para.pfidx_path = param["pfDatapath"];
-	para.pf_path = param[""];
+	para.pfidx_path = param["pf2Indexpath"];
+	para.pf_path = param["pf2path"];
+	para.pf1idx_path = param["pf1Indexpath"];
+	para.pf1_path = param["pf1path"];
+	para.output_ratio_path = param["quantResultDatapath"];
+	para.quantMethod = atoi(param["quantitativeMethod"].c_str());
+	para.detaFragment = atof(param["FTMS"].c_str());
+
+	vector<double> mZ;
+	while (param["reporterIonMZ"].find(',') != string::npos){		//提取reporterIonMZ内容，动态提取
+		string temp = "";
+		temp = param["reporterIonMZ"].substr(0, param["reporterIonMZ"].find(','));
+		mZ.push_back(atof(temp.c_str()));
+		param["reporterIonMZ"] = param["reporterIonMZ"].substr(param["reporterIonMZ"].find(',') + 2, param["reporterIonMZ"].size());
+	}
+	mZ.push_back(atof(param["reporterIonMZ"].c_str()));
+
+	para.reporterMZ.swap(mZ);
 
 	setBinPath(argv);
-	checkPara();
-	
-	char* paraFileName = argv[1];
-	
-
-	para.quantMethod = 1;
-	para.detaFragment = 200.0*0.000001;
-	para.input_spectra_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\Task1\\result\\pFind.spectra";
-	para.pf_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\iPRG_2012_HCDFT.pf2";
-	para.pfidx_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\iPRG_2012_HCDFT.pf2idx";
-	para.output_ratio_path = "H:\\3-database\\WIFF\\IPRG_2012\\mgf\\QuantRatio-ms2.pq2";
+	//checkPara();
+	displayPara();
 
 }
 
@@ -220,8 +266,10 @@ void readCmdline(const int argc, char* argv[]){
 	}
 	else{
 		//readCmd();
+		cout << "Todo: 准备加入从命令行读取参数的运行方式" << endl;
+		getchar();
 	}
 
 	int seconds = (clock() - start) / CLOCKS_PER_SEC;
-	cout << "== == == Time elapsed: " << seconds << " seconds. == == ==" << endl;
+	cout << "\t    == == == Time elapsed: " << seconds << " seconds. == == ==" << endl;
 }

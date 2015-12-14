@@ -17,7 +17,7 @@ int main(int argc, char* argv[]){
 
 	readCmdline(argc, argv);	//通过读取 [命令行] 或 [参数文件] 获取软件参数设置；
 
-	//readData();					//获取谱图信息；
+	readData();					//获取谱图信息；
 
 	return 0;
 }

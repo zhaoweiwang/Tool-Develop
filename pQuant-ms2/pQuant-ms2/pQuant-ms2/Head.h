@@ -15,6 +15,11 @@
 #include <stdio.h>
 #include <unordered_map>
 #include <map>
+// Attention:
+// If you use visual studio cl.exe compiler, use this header file
+#include "dirent.h"
+// else if you use gcc compiler, use this header file
+//#include <dirent.h>
 #include "stringProcess.h"
 
 using namespace std;
@@ -32,8 +37,8 @@ typedef struct parainfo{
 	string input_spectra_path = "";				//pFind.spectra结果文件，作为输入文件；
 	string pf_path = "";						//pf2文件路径；
 	string pfidx_path = "";						//pf2idx文件路径;
-	string pf1_path = "";
-	string pf1idx_path = "";
+	string pf1_path = "";						//pf1文件路径；
+	string pf1idx_path = "";					//pf1idx文件路径；
 	string output_ratio_path = "";				//定量比值输出路径；
 
 

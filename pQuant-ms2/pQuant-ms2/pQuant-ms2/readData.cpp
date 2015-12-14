@@ -3,9 +3,9 @@
 extern parainfo para;
 double fdr = 0.0;
 
-//vector<vector<int>> pf2Vec;		//pf2idx缓冲区
-unordered_map<int, int> mapScanPos;	//改用哈希
-vector<psmInfo> psmVec;			//PSM缓冲区
+//vector<vector<int>> pf2Vec;			//pf2idx缓冲区
+unordered_map<int, int> mapScanPos;		//改用哈希
+vector<psmInfo> psmVec;					//PSM缓冲区
 
 vector<string> reType{ "iTRAQ-4plex", "iTRAQ-8plex", "TMT-6plex"};
 vector<double> iTRAQ4{ 114.1, 115.1, 116.1, 117.1 };
@@ -43,7 +43,6 @@ double isotopeImpuritiesSolveTMT6plex[][6] = {
 
 
 void readPf2idx(){
-
 	cout << "Step1: Read .pf2idx file." << endl;
 	int scan;
 	int pos;
@@ -56,30 +55,15 @@ void readPf2idx(){
 	}
 
 	while (!feof(inputPf2idx)){
-		//vector<int> temp;
 		fread(&scan, sizeof(int), 1, inputPf2idx);
 		fread(&pos, sizeof(int), 1, inputPf2idx);
-		//cout << scan << " " << pos << endl;
-		//getchar();
-		//temp.push_back(scan); temp.push_back(pos);
-		//pf2Vec.push_back(temp);
 		mapScanPos[scan] = pos;
 	}
 	fclose(inputPf2idx);
-	//cout << pf2Vec.size() << endl;
-	//cout << mapScanPos.size() << endl;
-	//for (int i = 0; i < 10; i++){
-	//	cout << pf2Vec[i][0] << " " << pf2Vec[i][1] << endl;
-	//	cout << mapScanPos[pf2Vec[i][0]] << endl;
-	//	getchar();
-	//}
-	//getchar();
 }
 
 void readPsms(){
-
 	cout << "Step2: Read .spectra file." << endl;
-
 	ifstream input_spectra;
 	input_spectra.open(para.input_spectra_path, ios::binary);
 	if (!input_spectra.is_open()){
@@ -90,36 +74,28 @@ void readPsms(){
 	}
 
 	string tempPsm;
-
+	getline(input_spectra, tempPsm);					//过掉表头一行
 	while (0.01 - fdr >= 0 && !input_spectra.eof()){
 
 		psmInfo psm;
-
 		getline(input_spectra, tempPsm);
 		if (tempPsm == ""){
 			cout << "Successfully read " << para.input_spectra_path << "." << endl;
 			break;
-		}		//防止最后一行是换行的处理，原则上不会出现这种情况；
-		//cout << tempPsm << endl;
-		//getchar();
-		vector<int> t_pos;		//\t位点所在；
-		/*cout << t_pos.size() << endl;*/
+		}												//防止最后一行是换行的处理，原则上不会出现这种情况；
+
+		vector<int> t_pos;								//'\t'位点所在；
 		for (int i = 0; i < tempPsm.size(); i++){
 			if (tempPsm[i] == '\t')
 				t_pos.push_back(i);
 		}
-		//cout << tempPsm.substr(t_pos[3] + 1, t_pos[4] - t_pos[3] - 1) << endl;
-		//getchar();
+
 		fdr = atof(tempPsm.substr(t_pos[3] + 1, t_pos[4] - t_pos[3] - 1).c_str());
-		//cout << "fdr: " << fdr << endl;
-		//getchar();
 		if (0.01 - fdr < 0)	break;
 		else{
-
-			if (tempPsm.substr(t_pos[14] + 1, t_pos[15] - t_pos[14] - 1) == "decoy")	   //TODO: 如果有污染库则需要加；
+			if (tempPsm.substr(t_pos[14] + 1, t_pos[15] - t_pos[14] - 1) == "decoy")	  //TODO: 如果有污染库则需要加；
 				continue;
-			//cout << tempPsm.substr(t_pos[14] + 1, t_pos[15] - t_pos[14] - 1) << endl;
-			//getchar();
+
 			psm.title = tempPsm.substr(1, t_pos[0] - 1);
 			psm.scan = atoi(tempPsm.substr(t_pos[0] + 1, t_pos[1] - t_pos[0] - 1).c_str());
 			psm.mass1 = atof(tempPsm.substr(t_pos[1]+1, t_pos[2]-t_pos[1]-1).c_str());
@@ -135,34 +111,15 @@ void readPsms(){
 			psm.prosandCons = tempPsm.substr(t_pos[14] + 1, t_pos[15] - t_pos[14] - 1);
 			psm.pf2Pos = mapScanPos[psm.scan];
 
-			//cout << psm.title << endl;
-			//cout << psm.scan << endl;
-			//cout << psm.mass1 << endl;
-			//cout << psm.charge << endl;
-			//cout << psm.fdr << endl;
-			//cout << psm.pepSq << endl;
-			//cout << psm.mass2 << endl;
-			//cout << psm.massGapDa << endl;
-			//cout << psm.massGapPpm << endl;
-			//cout << psm.score << endl;
-			//cout << psm.modification << endl;
-			//cout << psm.proAc << endl;
-			//cout << psm.prosandCons << endl;
-			//cout << psm.pf2Pos << endl;
 			psmVec.push_back(psm);
-			//getchar();
-
 		}
-
 	}
 	cout << "Successfully read " << para.input_spectra_path << "." << endl;
 	cout << "Total PSM number: " << psmVec.size() << endl << endl;
 }
 
 void readPf2(){
-
 	cout << "Step3: Read .pf2 file." << endl;
-
 	ifstream input_pf2;
 	input_pf2.open(para.pf_path, ios::binary);
 	if (!input_pf2.is_open()){
@@ -172,22 +129,17 @@ void readPf2(){
 		cout << para.pf_path << " File open successfully.\n" << endl;
 	}
 
-	for (int i = 1; i < psmVec.size(); i++){
+	for (int i = 0; i < psmVec.size(); i++){
 
-		//cout << psmVec[i].scan << endl;
 		input_pf2.seekg(psmVec[i].pf2Pos + sizeof(int), ios::beg);
 		input_pf2.read((char*)&psmVec[i].peakNums, sizeof(int));
-		//cout << psmVec[i].peakNums << endl;
-		//getchar();
-		for (int j = 0; j < psmVec[i].peakNums; j++){
 
+		for (int j = 0; j < psmVec[i].peakNums; j++){
 			peakInfo tempPeak;
 			input_pf2.read((char*)&tempPeak.mz, sizeof(double));
 			input_pf2.read((char*)&tempPeak.iten, sizeof(double));
-			//cout << tempPeak.mz << " " << tempPeak.iten << endl;
-			//getchar();
-			psmVec[i].peaks.push_back(tempPeak);
 
+			psmVec[i].peaks.push_back(tempPeak);
 		}
 
 	}
@@ -196,62 +148,56 @@ void readPf2(){
 
 void getReporter(){
 
-	if (para.quantMethod > 0 && para.quantMethod < 4){
-		cout << "\nStep4: Get " << reType[para.quantMethod - 1] << " reporter-ion`s intensity." << endl;
+	if (para.quantMethod > -1 && para.quantMethod < 3){
+		cout << "\nStep4: Get " << reType[para.quantMethod] << " reporter-ion`s intensity." << endl;
 	}
 	else{
 		cout << "\nQuant-parameter: " << para.quantMethod << " is not valid!" << endl;
 		cout << "Currently, we only support 1=>iTRAQ-8plex, 2=>iTRAQ-4plex, 3=>TMT-6plex!" << endl;
 	}
 
-
-
-	if (1 == para.quantMethod){			//捞iTRAQ-4plex信息
+	para.detaFragment = (para.detaFragment+180)/1000000;
+	if (0 == para.quantMethod){									//捞iTRAQ-4plex信息
 
 		for (int i = 0; i < psmVec.size(); i++){
-
-			for (int j = 0; j < iTRAQ4.size(); j++){
-
+			//cout << "peaks number: " << psmVec[i].peaks.size() << endl;
+			for (int j = 0; j < para.reporterMZ.size(); j++){
 				double minDis = 10000.0;
 				int minDisIdx = -1;
-
-				for (int k = 0; k < psmVec[i].peaks.size(); k++){
-
-					if (fabs((iTRAQ4[j] - psmVec[i].peaks[k].mz)) < para.detaFragment*iTRAQ4[j]){
-						minDisIdx = k;
-						if (minDis > fabs(iTRAQ4[j] - psmVec[i].peaks[k].mz)){
-							minDis = fabs(iTRAQ4[j] - psmVec[i].peaks[k].mz);
+				for (int k = 0; k < psmVec[i].peaks.size(); k++){//A=5，B=10，B比A多100%，是（10 - 5）/5,基准一般都是真实的,被减数一般都是测量的
+					//cout << "peak: " << psmVec[i].peaks[k].mz << " " << psmVec[i].peaks[k].iten << endl;
+					if (fabs((psmVec[i].peaks[k].mz - para.reporterMZ[j])) < para.detaFragment*para.reporterMZ[j]){
+						//cout << "进网的鱼儿: " << psmVec[i].peaks[k].mz << " " << psmVec[i].peaks[k].iten << endl;
+						//minDisIdx = k;
+						if (minDis > fabs(para.reporterMZ[j] - psmVec[i].peaks[k].mz)){
+							minDis = fabs(para.reporterMZ[j] - psmVec[i].peaks[k].mz);
 							minDisIdx = k;
+							//cout << "被选中的孩子： " << psmVec[i].peaks[k].mz << endl;
 						}
 					}
-
-					if (psmVec[i].peaks[k].mz > iTRAQ4[j]+2){
-						break;
-					}
-
+					if (psmVec[i].peaks[k].mz > para.reporterMZ[j] + 2)	break; //离开区间了就跳掉不往下找了，节省时间
+					//getchar();
 				}
 
-				if (-1 == minDisIdx)
+				if (-1 == minDisIdx)							//这是在所开的区间内没有捞到峰的情况
 					psmVec[i].reporter.push_back(-1.0);
 				else
-					psmVec[i].reporter.push_back(psmVec[i].peaks[minDisIdx].iten);
+					psmVec[i].reporter.push_back(psmVec[i].peaks[minDisIdx].iten * 0.1);
 			}
 
+			cout << psmVec[i].title << endl;
 			cout << "reporter: " << endl;
 			for (int l = 0; l < psmVec[i].reporter.size(); l++)
 				cout << psmVec[i].reporter[l] << " ";
 			cout << endl;
 			getchar();
-
-
 		}
+	}
+	else if (1 == para.quantMethod){	//捞iTRAQ-8plex信息
+
 
 	}
-	else if (2 == para.quantMethod){	//捞iTRAQ-8plex信息
-
-
-	}
-	else if (3 == para.quantMethod){	//捞TMT-6plex信息
+	else if (2 == para.quantMethod){	//捞TMT-6plex信息
 
 
 	}

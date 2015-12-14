@@ -87,6 +87,7 @@
     <ClCompile Include="stringProcess.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dirent.h" />
     <ClInclude Include="Head.h" />
     <ClInclude Include="stringProcess.h" />
   </ItemGroup>
