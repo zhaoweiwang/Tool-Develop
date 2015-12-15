@@ -73,6 +73,7 @@ typedef struct psminfo{
 	vector<peakInfo> peaks;
 
 	vector<double> reporter;
+	vector<double> reporterCorrect;
 
 	//TODO: 利用继承派生出各种定量方法类
 

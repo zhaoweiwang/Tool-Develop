@@ -19,5 +19,7 @@ int main(int argc, char* argv[]){
 
 	readData();					//获取谱图信息；
 
+	calcuReporter();			//计算比值、中位数和标准差；
+
 	return 0;
 }
