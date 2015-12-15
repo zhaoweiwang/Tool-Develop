@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <ctime>
+#include <cmath>
 #include <stdio.h>
 #include <unordered_map>
 #include <map>
@@ -74,6 +75,8 @@ typedef struct psminfo{
 
 	vector<double> reporter;
 	vector<double> reporterCorrect;
+	vector<double> ratioReporter;
+	vector<double> ratioReporterCorrect;
 
 	//TODO: 利用继承派生出各种定量方法类
 
@@ -142,5 +145,14 @@ void readCmdline(const int argc, char* argv[]);
 返回：	无
 */
 void readData();
+
+
+/*
+函数名：	calcuReporter
+功能：	计算reporter ions比值、中位数和标准差；；
+输入：	无
+返回：	无
+*/
+void calcuReporter();
 
 #endif

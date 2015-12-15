@@ -36,6 +36,9 @@
     <ClCompile Include="classFunctionImplement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="calcuReporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Head.h">

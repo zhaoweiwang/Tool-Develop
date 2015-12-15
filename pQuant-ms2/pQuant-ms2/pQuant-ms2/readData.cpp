@@ -207,7 +207,7 @@ void correctIsotopeImpurities(){
 					for (int k = 0; k < para.reporterMZ.size(); k++)
 						tempInt += (psmVec[i].reporter[k] * isotopeImpuritiesSolveItraq4plex[j][k]);
 
-					if (tempInt < 0){
+					if (tempInt <= 0.0){
 						tempInt = -1.0;
 						psmVec[i].reporterCorrect.push_back(tempInt);
 					}

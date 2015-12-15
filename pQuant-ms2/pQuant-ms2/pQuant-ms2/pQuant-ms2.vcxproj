@@ -78,6 +78,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="calcuReporter.cpp" />
     <ClCompile Include="checkDate.cpp" />
     <ClCompile Include="classFunctionImplement.cpp" />
     <ClCompile Include="main.cpp" />
