@@ -21,5 +21,7 @@ int main(int argc, char* argv[]){
 
 	calcuReporter();			//计算比值、中位数和标准差；
 
+	outputResult();				//输出结果；
+
 	return 0;
 }
