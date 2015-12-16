@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <unordered_map>
 #include <map>
+#include <algorithm>
 // Attention:
 // If you use visual studio cl.exe compiler, use this header file
 #include "dirent.h"
