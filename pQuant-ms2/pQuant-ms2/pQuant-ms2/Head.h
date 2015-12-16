@@ -150,10 +150,18 @@ void readData();
 
 /*
 函数名：	calcuReporter
-功能：	计算reporter ions比值、中位数和标准差；；
+功能：	计算reporter ions比值、中位数和标准差；
 输入：	无
 返回：	无
 */
 void calcuReporter();
+
+/*
+函数名：	outputResult
+功能：	输出带有定量信息的定性结果，fdr合格的PSMs；
+输入：	无
+返回：	无
+*/
+void outputResult();
 
 #endif
