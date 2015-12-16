@@ -82,6 +82,7 @@
     <ClCompile Include="checkDate.cpp" />
     <ClCompile Include="classFunctionImplement.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="outputResult.cpp" />
     <ClCompile Include="printLogo.cpp" />
     <ClCompile Include="readCmdline.cpp" />
     <ClCompile Include="readData.cpp" />
