@@ -79,6 +79,10 @@ typedef struct psminfo{
 	vector<double> ratioReporter;
 	vector<double> ratioReporterCorrect;
 
+	//PIF区
+	double PIF = 0.0;
+	vector<peakInfo> peaksPrecusor;
+
 	//TODO: 利用继承派生出各种定量方法类
 
 }psmInfo;
