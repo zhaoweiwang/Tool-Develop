@@ -70,6 +70,10 @@ typedef struct psminfo{
 	string	prosandCons		= "";
 	
 	int		pf2Pos			= 0;
+	int		pf1Pos			= 0;
+
+	int precuNums = 0;
+	vector<double> precus;
 
 	int		peakNums		= 0;
 	vector<peakInfo> peaks;
@@ -159,6 +163,14 @@ void readData();
 返回：	无
 */
 void calcuReporter();
+
+/*
+函数名：	calcuPIF
+功能：	计算PIF值；
+输入：	无
+返回：	无
+*/
+void calcuPIF();
 
 /*
 函数名：	outputResult
