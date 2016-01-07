@@ -23,7 +23,11 @@ int main(int argc, char* argv[]){
 
 	calcuPIF();					//计算PIF；
 
-	outputResult();				//输出结果；
+	proteinInfer();				//蛋白归并；
+
+	outputResult();				//输出PSM层级的结果；
+
+
 
 	//TODO: 1.针对pf的批处理而不是单文件，因为1.人家load了很多wiff，不止一个；2.单个wiff本身可以很多，pParse会切割；
 	//TODO: 2.加入蛋白归并模块；

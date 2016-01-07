@@ -42,6 +42,12 @@
     <ClCompile Include="outputResult.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="calcuPIF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="proteinInfer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Head.h">

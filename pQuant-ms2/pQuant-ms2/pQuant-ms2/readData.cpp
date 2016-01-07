@@ -59,6 +59,8 @@ void readPf2idx(){
 		fread(&pos, sizeof(int), 1, inputPf2idx);
 		mapScanPos[scan] = pos;
 	}
+	//cout << "pf2idx size: " << mapScanPos.size() << endl;
+	//getchar();
 	fclose(inputPf2idx);
 }
 
@@ -70,7 +72,7 @@ void readPsms(){
 		cout << "Failed to open " << para.input_spectra_path << " File." << endl;
 	}
 	else{
-		cout << para.input_spectra_path << " File open successfully.\n" << endl;
+		cout << para.input_spectra_path << " File open successfully." << endl;
 	}
 
 	string tempPsm;
@@ -126,7 +128,7 @@ void readPf2(){
 		cout << "Failed to open " << para.pf_path << " File." << endl;
 	}
 	else{
-		cout << para.pf_path << " File open successfully.\n" << endl;
+		cout << para.pf_path << " File open successfully." << endl;
 	}
 
 	for (int i = 0; i < psmVec.size(); i++){

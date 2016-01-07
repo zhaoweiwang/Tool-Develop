@@ -14,9 +14,13 @@
 #include <ctime>
 #include <cmath>
 #include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include <unordered_map>
 #include <map>
+#include <set>
 #include <algorithm>
+#include <windows.h>
 // Attention:
 // If you use visual studio cl.exe compiler, use this header file
 #include "dirent.h"
@@ -37,12 +41,14 @@ typedef struct parainfo{
 	vector<double> reporterMZ;
 
 	string input_spectra_path = "";				//pFind.spectra结果文件，作为输入文件；
+	string input_protein_path = "";
 	string pf_path = "";						//pf2文件路径；
 	string pfidx_path = "";						//pf2idx文件路径;
 	string pf1_path = "";						//pf1文件路径；
 	string pf1idx_path = "";					//pf1idx文件路径；
 	string output_ratio_path = "";				//定量比值输出路径；
 
+	string fasta_path = "";				//fasta文件路径；
 
 }paraInfo;
 
@@ -68,28 +74,50 @@ typedef struct psminfo{
 	string  modification	= "";
 	string	proAc			= "";
 	string	prosandCons		= "";
-	
-	int		pf2Pos			= 0;
-	int		pf1Pos			= 0;
 
-	int precuNums = 0;
-	vector<double> precus;
-
-	int		peakNums		= 0;
 	vector<peakInfo> peaks;
 
+	//Reporter区
+	int pf2Pos = 0;
+	int peakNums = 0;
 	vector<double> reporter;
 	vector<double> reporterCorrect;
 	vector<double> ratioReporter;
 	vector<double> ratioReporterCorrect;
 
 	//PIF区
+	int scanPre = 0;
+	int pf1Pos = 0;
 	double PIF = 0.0;
-	vector<peakInfo> peaksPrecusor;
+	int precuNums = 0;
+	vector<peakInfo> precus;
+	//vector<peakInfo> peaksPrecusor;
 
 	//TODO: 利用继承派生出各种定量方法类
 
 }psmInfo;
+
+typedef struct proteininfo{
+
+	string ac = "";
+	vector<int> index;
+	string de = "";
+	double PIF = 0.0;
+	vector<double> ratio;
+	//vector<double> inten;
+	string tag = "";
+	string led = "";
+	set<string> peptide;
+
+	int psmNum = 0;
+	int pepNum = 0;
+
+}proteinInfo;
+
+typedef struct rela{
+	string str = "";
+	vector<string> pro;
+}Rela;
 
 class screenInfo{
 public:
@@ -171,6 +199,14 @@ void calcuReporter();
 返回：	无
 */
 void calcuPIF();
+
+/*
+函数名：	proteinInfer
+功能：	蛋白归并；
+输入：	无
+返回：	无
+*/
+void proteinInfer();
 
 /*
 函数名：	outputResult

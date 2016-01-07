@@ -114,11 +114,13 @@ void DisplayCMDUsage()
 void InitializePara(){
 	para.binPath = ".\\";
 	para.input_spectra_path = "D:\\pFindWorkspace\\";			//pFind工作目录下的pFind.spectra路径
+	para.input_protein_path = "D:\\pFindWorkspace\\";			//pFind工作目录下的pFind.protein路径
 	para.pfidx_path = "D:\\DataSet\\";							//数据存放目录下pParse导出的pf2idx路径
 	para.pf_path = "D:\\DataSet\\";								//数据存放目录下pParse导出的pf2路径
 	para.pf1idx_path = "D:\\DataSet\\";							//数据存放目录下pParse导出的pf1idx路径
 	para.pf1_path = "D:\\DataSet\\";							//数据存放目录下pParse导出的pf1路径
 	para.output_ratio_path = "D:\\DataSet\\";					//计算结果的导出路径
+	para.fasta_path = "D:\\DataSet\\";						//fasta数据库路径
 	para.quantMethod = 0;										//定量方法的选择，default = 0, iTRAQ-4plex
 	para.detaFragment = 20.0;									//Reporter Ion的窗口大小
 	para.reporterMZ = { 114.110, 115.110, 116.110, 117.110 };	//存放reporter Ion对应的的MZ，默认是iTRAQ4
@@ -221,6 +223,8 @@ void readPara(char* argv[]){								//打开m_cmdInfo[1] .para文件读参数值
 	para.pf_path = param["pf2path"];
 	para.pf1idx_path = param["pf1Indexpath"];
 	para.pf1_path = param["pf1path"];
+	para.fasta_path = param["fastapath"];
+	para.input_protein_path = param["proteinDatapath"];
 	para.output_ratio_path = param["quantResultDatapath"];
 	para.quantMethod = atoi(param["quantitativeMethod"].c_str());
 	para.detaFragment = atof(param["FTMS"].c_str());
