@@ -189,6 +189,7 @@ namespace wiff
                 for (int i = 0; i < files.Count; i++)
                 {
                     extract(files[i], para);
+                    //用了批处理，但pParse调用的时候却是一次一个文件；
                 }
             }
             watch.Stop();
