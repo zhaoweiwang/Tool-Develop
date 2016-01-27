@@ -1,4 +1,36 @@
-﻿#include "Head.h"
+﻿cout << "
+# pQuant - ms2.para params template
+# For help : mail to wangzhaowei@ict.ac.cn
+# Time: 2015.10.27
+
+[Basic Options]
+spectraDatapath = D : \Issues\pFindWorkspace\pFind.spectra
+proteinDatapath = D:\Issues\pFindWorkspace\pFind.protein
+pf2Indexpath = D:\Issues\Dataset\HCDFT.pf2idx
+pf2path = D:\Issues\Dataset\HCDFT.pf2
+pf1Indexpath = D:\Issues\Dataset\iTRAQ_S4_2ul.pf1idx
+pf1path = D:\Issues\Dataset\iTRAQ_S4_2ul.pf1
+fastapath = D:\Issues\Dataset\Synechocystis_Cyanobase.fasta
+quantResultDatapath = D:\Issues\Dataset\pQuant - ms2_Result.spectra
+
+[Advanced Options]
+quantitativeMethod = 0
+# 0, quantitative method : iTRAQ - 4plex;
+# 1, quantitative method : iTRAQ - 8plex;
+# 1, quantitative method : TMT - 6plex.
+reporterIonMZ = 114.110, 115.110, 116.110, 117.110
+# you could customize the reporter ion M / Z.
+# e.g.iTRAQ - 4plex: 114.110, 115.110, 116.110, 117.110.
+FTMS = 20ppm
+# a fragment mass tolerance was set by yourself, which default is 20 ppm.
+PIF = 0.75
+# a option to filter the PSMs and Protein for the interference of co - elution precursor ions
+FDR = 0.01
+
+" << endl;
+
+
+#include "Head.h"
 
 vector<string> m_cmdInfo;
 const string Version = "-Release-1.0.0";
