@@ -24,16 +24,17 @@ namespace wiff
     {
         public static void Parse(Spectrum spec, WiffFile wifffile,int cycleCount, int experimentCount, string ms1file,string ms2file,string mgffile,Param para)
         {
-
-            
-
             StreamWriter writerms1 = null; 
             StreamWriter writerms2 = null; 
-            StreamWriter writermgf = null; 
+            StreamWriter writermgf = null;
+
+            string flagMsFileName = ms1file.Substring(0, ms1file.LastIndexOf('.')) + ".Xtract";
+
             if (para.ms1 == 1)
             {
                 writerms1 = new StreamWriter(new FileStream(ms1file, FileMode.Create, FileAccess.Write));
                 spec.WriteHeader(writerms1,para);
+
             }
             if (para.ms2 == 1)
             {
@@ -50,6 +51,7 @@ namespace wiff
             {
                 string header = "[wiff] <Output files>: ";
                 Console.Write("\r" + header + String.Format("{0:F3}", (double)(j + 1) / (double)cycleCount * 100) + "%");
+
                 for (int i = 0; i < experimentCount; i++)
                 {
                     TotalIonChromatogram totalIonChromatogram = spec.array[i];
@@ -100,7 +102,10 @@ namespace wiff
                                 if (para.ms2 == 1)
                                 {
                                     spec.WriteMS2(writerms2);
-                                    // TODO: 存入缓冲区别，准备一次性输出；
+
+                                    //写出.Xtract文件作为导出flag.
+                                    FileStream flagMsFile = new FileStream(flagMsFileName, FileMode.Create, FileAccess.Write);
+                                    flagMsFile.Close();
 
                                 }
                                 if (para.mgf == 1)
@@ -147,6 +152,7 @@ namespace wiff
             string mgffile = para.outputPath + ".mgf";
             string ms1file = para.outputPath + ".ms1";
             string ms2file = para.outputPath + ".ms2";
+
             for (int sample = 1; sample <= wifffile.m_batch.GetSampleNames().Length; ++sample)
             {
                 wifffile.GetSample(sample);
@@ -166,6 +172,7 @@ namespace wiff
 
             }
             Console.WriteLine("[wiff] Output Files Completed!");
+            //到此结束
         }
 
 
@@ -173,8 +180,12 @@ namespace wiff
         static void Main(string[] args)
         {
             Application.EnableVisualStyles();
+            //此方法为应用程序启用可视样式，如果控件和操作系统支持视觉样式，则控件将以视觉样式进行绘制
+
             Stopwatch watch = new Stopwatch();
             watch.Start();
+            //计时
+
             List<string> files = new List<string>();
             Param para = new Param();
             para.ParseParam(args);
@@ -192,6 +203,8 @@ namespace wiff
                     //用了批处理，但pParse调用的时候却是一次一个文件；
                 }
             }
+
+
             watch.Stop();
             string runtime = (watch.ElapsedMilliseconds / 1000).ToString();
             Console.WriteLine("{0} {1}", "[wiff] == == == Time elapsed: ", runtime + "s. == == ==");

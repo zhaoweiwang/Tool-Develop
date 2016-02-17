@@ -13,6 +13,8 @@ namespace wiff
         gaussian,
         weightedMean
     };
+
+
     class PeakDetection
     {
         public static double MS2MassTorrence = 0.03; //分辨率为±0.02，所以设置近邻的峰相差不多于0.01Da
@@ -334,7 +336,7 @@ namespace wiff
 
         //左零到右零强度谱峰之间的进行中心化
         public static void WindowCentroid(List<double> profilemz, List<double> profileint,
-            out List<double> centermzs, out List<double> centerints,Spectrum spec)
+            out List<double> centermzs, out List<double> centerints, Spectrum spec)
         {
             centermzs = new List<double>();
             centerints = new List<double>();

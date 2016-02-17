@@ -29,7 +29,7 @@ namespace wiff
 
         public void listAllFiles(ref List<string> inFiles)
         {
-            string error1 = "[wiff] <Exception>: Failed to find file ";
+            string error1 = "[wiff] <Exception>: Failed to find file.";
             string error2 = "[wiff] <Exception>: Warning: No wiff files.";
             for (int i = 0; i < inFiles.Count(); i++)
             {

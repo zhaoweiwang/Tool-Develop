@@ -176,7 +176,7 @@ namespace wiff
             writer.WriteLine("{0} {1}", "H\tCreationDate\t", localtime);
             writer.WriteLine("{0} {1}", "H\tExtractor\t", "wiff");
             writer.WriteLine("{0} {1}", "H\tExtractorVersion\t", "1.0.0.1");
-            writer.WriteLine("{0} {1}", "H\tComments\t", "Owned by pFind Studio, 2014");
+            writer.WriteLine("{0} {1}", "H\tComments\t", "Owned by pFind Studio, 2016");
             writer.WriteLine("{0} {1}", "H\tDataType\t", (para.cent == true) ? "Centroid" : "Profile");
         }
 
