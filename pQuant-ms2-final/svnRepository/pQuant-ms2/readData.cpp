@@ -43,6 +43,7 @@ double isotopeImpuritiesSolveTMT6plex[][6] = {
 const bool bCorrect = true;
 
 void readPf2idx(){
+
 	cout << "Step2: Read .pf2idx file." << endl;
 
 	for (int i = 0; i < psmVec.size(); i++){
@@ -73,19 +74,19 @@ void readPf2idx(){
 
 void readPsms(){
 
-	cout << "Step1: Read .spectra file." << endl;
+	cout << "\nStep1: Read .spectra file." << endl;
+
 	ifstream input_spectra;
 	input_spectra.open(para.input_spectra_path, ios::binary);
 	if (!input_spectra.is_open()){
 		cout << "Failed to open " << para.input_spectra_path << " File." << endl;
-	}
-	else{
+	}else{
 		cout << para.input_spectra_path << " File open successfully." << endl;
 	}
 
 	string tempPsm;
 	getline(input_spectra, tempPsm);					//过掉表头一行
-	while (0.01 - fdr >= 0 && !input_spectra.eof()){
+	while (para.PsmFDR - fdr >= 0 && !input_spectra.eof()){
 
 		psmInfo psm;
 		getline(input_spectra, tempPsm);
@@ -114,17 +115,17 @@ void readPsms(){
 			psm.pf2idx = psm.title.substr(0, psm.title.find('.')) + "_HCDFT.pf2idx";
 			psm.pf2 = psm.title.substr(0, psm.title.find('.')) + "_HCDFT.pf2";
 
-			psm.pf1idx = para.pfidx_path + psm.pf1idx;
-			psm.pf1 = para.pfidx_path + psm.pf1;
-			psm.pf2idx = para.pfidx_path + psm.pf2idx;
-			psm.pf2 = para.pfidx_path + psm.pf2;
+			psm.pf1idx = para.pf_path + psm.pf1idx;
+			psm.pf1 = para.pf_path + psm.pf1;
+			psm.pf2idx = para.pf_path + psm.pf2idx;
+			psm.pf2 = para.pf_path + psm.pf2;
 
 			//cout << "title:" << psm.title << endl;
-	/*		cout << "pf1idx:" << psm.pf1idx << endl;
-			cout << "pf1:" << psm.pf1 << endl;
-			cout << "pf2idx" << psm.pf2idx << endl; 
-			cout << "pf2:" << psm.pf2 << endl;
-			getchar();*/
+			//cout << "pf1idx:" << psm.pf1idx << endl;
+			//cout << "pf1:" << psm.pf1 << endl;
+			//cout << "pf2idx" << psm.pf2idx << endl; 
+			//cout << "pf2:" << psm.pf2 << endl;
+			//getchar();
 
 			psm.mass1 = atof(tempPsm.substr(t_pos[1]+1, t_pos[2]-t_pos[1]-1).c_str());
 			psm.charge = atoi(tempPsm.substr(t_pos[2]+1, t_pos[3]-t_pos[2]-1).c_str());
@@ -148,8 +149,7 @@ void readPsms(){
 
 void readPf2(){
 
-	cout << "Step3: Read .pf2 file." << endl;
-
+	cout << "\nStep3: Read .pf2 file." << endl;
 
 	for (int i = 0; i < psmVec.size(); i++){
 
@@ -174,6 +174,7 @@ void readPf2(){
 		}
 		input_pf2.close();
 	}
+
 	cout << "Successfully read pf2 File." << endl;
 }
 
@@ -187,7 +188,7 @@ void getReporter(){
 		cout << "Currently, we only support 1=>iTRAQ-8plex, 2=>iTRAQ-4plex, 3=>TMT-6plex!" << endl;
 	}
 
-	para.detaFragment = (para.detaFragment+180)/1000000;
+	para.detaFragment = (para.detaFragment)/1000000;
 	if (0 == para.quantMethod){									//捞iTRAQ-4plex信息
 
 		for (int i = 0; i < psmVec.size(); i++){
@@ -285,7 +286,7 @@ void readData(){
 	getReporter();
 
 	//Step5: 矫正reporter ions强度；
-	if (bCorrect){			//矫正reporter ions强度，由试剂厂商提供（参考iQuant）；
+	if (para.correct){			//矫正reporter ions强度，由试剂厂商提供（参考iQuant）；
 		correctIsotopeImpurities();
 	}
 }

@@ -10,7 +10,7 @@ vector<int> posPf1;
 
 void readPf1idx(){
 
-	cout << "Step5: Read .pf1idx file." << endl;
+	cout << "\nStep5: Read .pf1idx file." << endl;
 
 	for (int i = 0; i < psmVec.size(); i++){
 	
@@ -46,7 +46,6 @@ void readPf1idx(){
 		}
 		fclose(inputPf1idx);
 	}
-
 }
 
 void calcuPf1Pos(){
@@ -67,7 +66,7 @@ void calcuPf1Pos(){
 
 void readPf1(){
 
-	cout << "Step6: Read .pf1 file." << endl;
+	cout << "\nStep6: Read .pf1 file." << endl;
 
 	for (int i = 0; i < psmVec.size(); i++){
 
@@ -104,7 +103,7 @@ void readPf1(){
 		//	cout << psmVec[i].precus[j].mz << "\t" << psmVec[i].precus[j].iten << endl;
 		//}
 	}
-	cout << "Successfully read " << para.pf1_path << endl << endl;
+	cout << "Successfully read pf1 File." << endl << endl;
 
 	//for (int i = 0; i < psmVec.size(); i++){
 	//	cout << "Title: " << psmVec[i].title << endl;

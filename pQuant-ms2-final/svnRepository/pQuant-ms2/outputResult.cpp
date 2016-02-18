@@ -74,6 +74,7 @@ void outputProtein(){
 }
 
 void outputResult(){
+
 	cout << "\nStep9: Output .spectra and .protein file." << endl;
 
 	//outputPsms();

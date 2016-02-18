@@ -29,15 +29,14 @@ inline bool compSize(const proteinInfo& a, const proteinInfo& b){
 }
 
 void readFasta(){
-	cout << "Step8: Read .fasta file." << endl;
+
+	cout << "\nStep7: Read .fasta file." << endl;
 
 	ifstream inputFasta;
 	inputFasta.open(para.fasta_path, ios::binary);
 	if (!inputFasta.is_open()){
 		cout << "Failed to open " << para.fasta_path << " File." << endl;
-	}
-	else
-	{
+	}else{
 		cout << para.fasta_path << " File open successfully." << endl;
 	}
 
@@ -300,9 +299,7 @@ void calUniqueNum(){
 	inputProtein.open(para.input_protein_path, ios::binary);
 	if (!inputProtein.is_open()){
 		cout << "Failed to open " << para.input_protein_path << " File." << endl;
-	}
-	else
-	{
+	}else{
 		cout << para.input_protein_path << " File open successfully." << endl;
 	}
 
@@ -353,8 +350,6 @@ void proteinInfer(){
 	readFasta();	
 	proteinMap();	//¿¨PIF
 	calUniqueNum();
-
 	calcuPro();		//«@È¡ProteinVec
-
 	//proteinRela();
 }

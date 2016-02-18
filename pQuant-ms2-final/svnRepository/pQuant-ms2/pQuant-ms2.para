@@ -3,11 +3,11 @@
 # Time: 2015.10.27
 
 [Basic Options]
-resultDatapath = D:\Issues\pFindWorkspace\20160126_Tuber_GroupB\result\pFind.spectra
-pfDatapath = D:\Issues\Dataset\20160125_tuber\GroupBraw\
+resultDatapath = D:\Issues\pFindWorkspace\20160125_Tuber_GroupA\result\pFind.spectra
+pfDatapath = D:\Issues\Dataset\20160125_tuber\GroupAraw\
 # you need to add the path of pf files which output by pParse.
-fastadatapath = D:\Issues\Dataset\20160125_tuber\fasta\uniprot-human-201506.fasta
-quantResultDatapath = D:\Issues\pFindWorkspace\20160126_Tuber_GroupB\result\pQuant-ms2_Result.spectra
+fastaDatapath = D:\Issues\Dataset\20160125_tuber\fasta\uniprot-human-201506.fasta
+quantResultDatapath = D:\Source\GitHub\Tool-Develop\pQuant-ms2-final\svnRepository\pQuant-ms2\pQuant-ms2_Result.spectra
 
 [Advanced Options]
 quantitativeMethod = 0
@@ -20,7 +20,7 @@ reporterIonMZ = 114.111, 115.111, 116.111, 117.111
 FTMS = 200ppm
 # a fragment mass tolerance was set by yourself, which default is 20 ppm.
 PIF = 0.75
-# precusor inference option you need to define, which default is 0.75.
+# a option to filter the PSMS and Protein for the interference of co-elution precursor ions.
 PsmFDR = 0.01
 # FDR of PSMs result you need to set, which default is 0.01.
 ProteinFDR = 0.01

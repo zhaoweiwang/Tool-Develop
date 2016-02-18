@@ -1,0 +1,27 @@
+﻿Build started 2016/2/18 21:37:10.
+     1>Project "D:\Source\GitHub\Tool-Develop\pQuant-ms2-final\svnRepository\pQuant-ms2\pQuant-ms2.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         D:\Software\vs2013\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _LIB /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt readCmdline.cpp
+         readCmdline.cpp
+     1>readCmdline.cpp(188): warning C4018: '<' : signed/unsigned mismatch
+     1>readCmdline.cpp(257): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+       Link:
+         D:\Software\vs2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Source\GitHub\Tool-Develop\pQuant-ms2-final\svnRepository\Release\pQuant-ms2.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Source\GitHub\Tool-Develop\pQuant-ms2-final\svnRepository\Release\pQuant-ms2.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Source\GitHub\Tool-Develop\pQuant-ms2-final\svnRepository\Release\pQuant-ms2.lib" /MACHINE:X86 /SAFESEH Release\calcuPIF.obj
+         Release\calcuReporter.obj
+         Release\checkDate.obj
+         Release\classFunctionImplement.obj
+         Release\main.obj
+         Release\outputResult.obj
+         Release\printLogo.obj
+         Release\proteinInfer.obj
+         Release\readCmdline.obj
+         Release\readData.obj
+         Release\stringProcess.obj
+         Generating code
+         Finished generating code
+         pQuant-ms2.vcxproj -> D:\Source\GitHub\Tool-Develop\pQuant-ms2-final\svnRepository\Release\pQuant-ms2.exe
+     1>Done Building Project "D:\Source\GitHub\Tool-Develop\pQuant-ms2-final\svnRepository\pQuant-ms2\pQuant-ms2.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.02

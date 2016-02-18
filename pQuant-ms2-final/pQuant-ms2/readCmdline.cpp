@@ -67,7 +67,10 @@ void GeneratedParamTemplate(){
 	fprintf(pfile, "# e.g. iTRAQ-4plex: 114.110, 115.110, 116.110, 117.110.\n");
 	fprintf(pfile, "FTMS = 20ppm\n");
 	fprintf(pfile, "# a fragment mass tolerance was set by yourself, which default is 20 ppm.\n");
-
+	fprintf(pfile, "PIF = 0.75\n");
+	fprintf(pfile, "# a option to filter the PSMS and Protein for the interference of co-elution precursor ions.\n");
+	fprintf(pfile, "FDR = 0.01\n");
+	fprintf(pfile, "# an important parameter to filter result.\n");
 
 	fclose(pfile);
 }
@@ -82,12 +85,10 @@ void Attention(){
 void printHelpInfo(){
 	printVersion();			//打印版本号，以及版本更新区别
 	Usage();				//配置文件使用打印
-	Attention();
-	getchar();
+	Attention();			//提示配置文件配置，以及生成默认配置文件
 }
 
-void DisplayCMDUsage()
-{
+void DisplayCMDUsage(){
 	cout << "\t=================================================" << endl;
 	cout << "\t===    Welcome to try pQuant-ms2 Switches!    ===" << endl;
 	cout << "\t=================================================" << endl;
@@ -103,21 +104,35 @@ void DisplayCMDUsage()
 	cout << "\t-W fragment mass tolerance  default (20 ppm) " << endl;
 	cout << "\t-M quantitative method      default (0) " << endl;
 	cout << "\t-R reporter ion M/Z         default (114.110, 115.110, 116.110, 117.110)" << endl;
+	cout << "\t-FDR FDR                    default (0.01)" << endl;
+	cout << "\t-PIF PIF                    default (0.75)" << endl;
 }
 
 void InitializePara(){
 	para.binPath = ".\\";
+
 	para.input_spectra_path = "D:\\pFindWorkspace\\pFind.spectra";			//pFind工作目录下的pFind.spectra路径
 	para.input_protein_path = "D:\\pFindWorkspace\\pFind.protein";			//pFind工作目录下的pFind.protein路径
-	para.pfidx_path = "D:\\DataSet\\";							//数据存放目录下pParse导出的pf2idx路径
-	para.pf_path = "D:\\DataSet\\";								//数据存放目录下pParse导出的pf2路径
-	para.pf1idx_path = "D:\\DataSet\\";							//数据存放目录下pParse导出的pf1idx路径
-	para.pf1_path = "D:\\DataSet\\";							//数据存放目录下pParse导出的pf1路径
-	para.output_ratio_path = "D:\\DataSet\\";					//计算结果的导出路径
-	para.fasta_path = "D:\\DataSet\\";							//fasta数据库路径
-	para.quantMethod = 0;										//定量方法的选择，default = 0, iTRAQ-4plex
-	para.detaFragment = 200.0;									//Reporter Ion的窗口大小
-	para.reporterMZ = { 114.111, 115.111, 116.111, 117.111 };	//存放reporter Ion对应的的MZ，默认是iTRAQ4
+
+	para.pfidx_path = "D:\\DataSet\\";										//数据存放目录下pParse导出的pf2idx路径
+	para.pf_path = "D:\\DataSet\\";											//数据存放目录下pParse导出的pf2路径
+	para.pf1idx_path = "D:\\DataSet\\";										//数据存放目录下pParse导出的pf1idx路径
+	para.pf1_path = "D:\\DataSet\\";										//数据存放目录下pParse导出的pf1路径
+
+	para.output_ratio_path = "D:\\DataSet\\";								//计算结果的导出路径
+
+	para.fasta_path = "D:\\DataSet\\";										//fasta数据库路径
+
+	para.quantMethod = 0;													//定量方法的选择，default = 0, iTRAQ-4plex
+	para.detaFragment = 200.0;												//Reporter Ion的窗口大小
+	para.reporterMZ = { 114.111, 115.111, 116.111, 117.111 };				//存放reporter Ion对应的的MZ，默认是iTRAQ4
+
+	para.PIF = 0.75;														//PIF，默认卡0.75
+	para.PsmFDR = 0.01;														//PSM层次的FDR，卡0.01
+	para.ProteinFDR = 0.01;													//Protein层次的FDR，卡0.01
+
+	para.correct = true;													//强度校正矩阵，默认为true
+
 }
 
 void setBinPath(char* argv[]){								// The path of pParse.exe. Extract the path from argv[0]
@@ -153,16 +168,22 @@ void displayPara(){
 
 	int paraCount = 1;
 
-	cout << "\t       --------- BEGIN PARAMETERS ---------" << endl << endl;
-	cout << "[" << paraCount++ << "]" << ": " << "spectraDatapath" << " = " << para.input_spectra_path << endl;
-	cout << "[" << paraCount++ << "]" << "pf2Indexpath" << " = " << para.pfidx_path << endl;
-	cout << "[" << paraCount++ << "]" << ": " << "pf2path" << " = " << para.pf_path << endl;
-	cout << "[" << paraCount++ << "]" << ": " << "pf1Indexpath" << " = " << para.pf1idx_path << endl;
-	cout << "[" << paraCount++ << "]" << ": " << "pf1path" << " = " << para.pf1_path << endl;
-	cout << "[" << paraCount++ << "]" << ": " << "quantResultDatapath" << " = " << para.output_ratio_path << endl;
-	cout << "[" << paraCount++ << "]" << ": " << "quantitativeMethod" << " = " << para.quantMethod << endl;
-	cout << "[" << paraCount++ << "]" << ": " << "FTMS" << " = " << para.detaFragment << endl;
-	
+	cout << "\n\t       --------- BEGIN PARAMETERS ---------" << endl << endl;
+	cout << "[" << paraCount++ << "]" << ":  " << "resultDatapath" << " = " << para.input_spectra_path << endl;
+	//cout << "[" << paraCount++ << "]" << ": " << "pf2Indexpath" << " = " << para.pfidx_path << endl;
+	cout << "[" << paraCount++ << "]" << ":  " << "pfDatapath" << " = " << para.pf_path << endl;
+	//cout << "[" << paraCount++ << "]" << ": " << "pf1Indexpath" << " = " << para.pf1idx_path << endl;
+	//cout << "[" << paraCount++ << "]" << ": " << "pf1path" << " = " << para.pf1_path << endl;
+	cout << "[" << paraCount++ << "]" << ":  " << "fastaDatapath" << " = " << para.fasta_path << endl;
+	cout << "[" << paraCount++ << "]" << ":  " << "quantResultDatapath" << " = " << para.output_ratio_path << endl;
+	cout << "[" << paraCount++ << "]" << ":  " << "quantitativeMethod" << " = " << para.quantMethod << endl;
+	cout << "[" << paraCount++ << "]" << ":  " << "FTMS" << " = " << para.detaFragment << endl;
+	cout << "[" << paraCount++ << "]" << ":  " << "PIF" << " = " << para.PIF << endl;
+	cout << "[" << paraCount++ << "]" << ":  " << "PsmFDR" << " = " << para.PsmFDR << endl;
+	cout << "[" << paraCount++ << "]" << ":  " << "ProteinFDR" << " = " << para.ProteinFDR << endl;
+	cout << "[" << paraCount++ << "]" << ": " << "Correct" << " = " << para.correct << endl;
+
+
 	cout << "[" << paraCount++ << "]" << ": " << "reporterIonMZ" << " =";
 	for (int i = 0; i < para.reporterMZ.size(); i++) cout << " " << para.reporterMZ[i];
 	cout << endl << endl;
@@ -192,6 +213,8 @@ void readPara(char* argv[]){								//打开m_cmdInfo[1] .para文件读参数值
 		screenInfo pS;
 		pS.printInfoTo(cout, "Error", inFo);
 		throw inFo;
+	}else{
+		cout << "The File " << argv[1] << " opened successfully." << endl;
 	}
 
 	char strTemp[256];
@@ -212,16 +235,26 @@ void readPara(char* argv[]){								//打开m_cmdInfo[1] .para文件读参数值
 		param[forward] = backward;
 	}
 
-	para.input_spectra_path = param["spectraDatapath"];
-	para.pfidx_path = param["pf2Indexpath"];
-	para.pf_path = param["pf2path"];
-	para.pf1idx_path = param["pf1Indexpath"];
-	para.pf1_path = param["pf1path"];
-	para.fasta_path = param["fastapath"];
-	para.input_protein_path = param["proteinDatapath"];
+	para.input_spectra_path = param["resultDatapath"];
+	para.input_protein_path = param["resultDatapath"].substr(0, param["resultDatapath"].find_last_of('.')) + ".protein";
+	//cout << para.input_protein_path << endl;
+	//cout << para.input_spectra_path << endl;
+	//getchar();
+
+	//para.pfidx_path = param["pf2Indexpath"];
+	para.pf_path = param["pfDatapath"];
+	//para.pf1idx_path = param["pf1Indexpath"];
+	//para.pf1_path = param["pf1path"];
+	para.fasta_path = param["fastaDatapath"];
+	//para.input_protein_path = param["proteinDatapath"];
 	para.output_ratio_path = param["quantResultDatapath"];
+
 	para.quantMethod = atoi(param["quantitativeMethod"].c_str());
 	para.detaFragment = atof(param["FTMS"].c_str());
+	para.PIF = atof(param["PIF"].c_str());
+	para.PsmFDR = atof(param["PsmFDR"].c_str());
+	para.ProteinFDR = atof(param["ProteinFDR"].c_str());
+	para.correct = atoi(param["Correct"].c_str());
 
 	vector<double> mZ;
 	while (param["reporterIonMZ"].find(',') != string::npos){		//提取reporterIonMZ内容，动态提取
@@ -237,7 +270,6 @@ void readPara(char* argv[]){								//打开m_cmdInfo[1] .para文件读参数值
 	setBinPath(argv);
 	//checkPara();
 	displayPara();
-
 }
 
 //void readCmd(){
@@ -257,7 +289,6 @@ void readCmdline(const int argc, char* argv[]){
 
 	if (1 == argc){
 		printHelpInfo();
-		getchar();
 		DisplayCMDUsage();
 	}else if (argc == 2 && (stringProcess::bMatchingFix(argv[1], ".cfg", true, true) || stringProcess::bMatchingFix(argv[1], ".para", true, true))){
 		readPara(argv);
