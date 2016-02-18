@@ -1,0 +1,29 @@
+# pQuant-ms2.para params template
+# For help: mail to wangzhaowei@ict.ac.cn 
+# Time: 2015.10.27
+
+[Basic Options]
+resultDatapath = D:\Issues\pFindWorkspace\20160126_Tuber_GroupB\result\pFind.spectra
+pfDatapath = D:\Issues\Dataset\20160125_tuber\GroupBraw\
+# you need to add the path of pf files which output by pParse.
+fastadatapath = D:\Issues\Dataset\20160125_tuber\fasta\uniprot-human-201506.fasta
+quantResultDatapath = D:\Issues\pFindWorkspace\20160126_Tuber_GroupB\result\pQuant-ms2_Result.spectra
+
+[Advanced Options]
+quantitativeMethod = 0
+# 0, quantitative method: iTRAQ-4plex;
+# 1, quantitative method: iTRAQ-8plex;
+# 1, quantitative method: TMT-6plex.
+reporterIonMZ = 114.111, 115.111, 116.111, 117.111
+# you could customize the reporter ion M/Z.
+# e.g. iTRAQ-4plex: 114.110, 115.110, 116.110, 117.110.
+FTMS = 200ppm
+# a fragment mass tolerance was set by yourself, which default is 20 ppm.
+PIF = 0.75
+# precusor inference option you need to define, which default is 0.75.
+PsmFDR = 0.01
+# FDR of PSMs result you need to set, which default is 0.01.
+ProteinFDR = 0.01
+# FDR of protein you need to set, which default is 0.01.
+Correct = 1
+# Did you want to use CorrectMatrix to correct the itensity of plex ion, which default is true.

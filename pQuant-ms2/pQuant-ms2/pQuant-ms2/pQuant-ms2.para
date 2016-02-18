@@ -1,0 +1,26 @@
+# pQuant-ms2.para params template
+# For help: mail to wangzhaowei@ict.ac.cn 
+# Time: 2015.10.27
+
+[Basic Options]
+spectraDatapath = D:\Issues\pFindWorkspace\20151208_gly_syn_soluble_iTRAQ_S4_2ul_wiff\result\pFind.spectra
+proteinDatapath = D:\Issues\pFindWorkspace\20151208_gly_syn_soluble_iTRAQ_S4_2ul_wiff\result\pFind.protein
+pf2Indexpath = D:\Issues\Dataset\20151203_gly_syn_soluble_iTRAQ_S4_2ul\test\gly_syn_soluble_iTRAQ_S4_2ul_HCDFT.pf2idx
+pf2path = D:\Issues\Dataset\20151203_gly_syn_soluble_iTRAQ_S4_2ul\test\gly_syn_soluble_iTRAQ_S4_2ul_HCDFT.pf2
+pf1Indexpath = D:\Issues\Dataset\20151203_gly_syn_soluble_iTRAQ_S4_2ul\test\gly_syn_soluble_iTRAQ_S4_2ul.pf1idx
+pf1path = D:\Issues\Dataset\20151203_gly_syn_soluble_iTRAQ_S4_2ul\test\gly_syn_soluble_iTRAQ_S4_2ul.pf1
+fastapath = D:\Issues\Dataset\20151203_gly_syn_soluble_iTRAQ_S4_2ul\Synechocystis_Cyanobase10262011.fasta
+quantResultDatapath = D:\Issues\Dataset\20151203_gly_syn_soluble_iTRAQ_S4_2ul\test\pQuant-ms2_Result.spectra
+
+[Advanced Options]
+quantitativeMethod = 0
+# 0, quantitative method: iTRAQ-4plex;
+# 1, quantitative method: iTRAQ-8plex;
+# 1, quantitative method: TMT-6plex.
+reporterIonMZ = 114.110, 115.110, 116.110, 117.110
+# you could customize the reporter ion M/Z.
+# e.g. iTRAQ-4plex: 114.110, 115.110, 116.110, 117.110.
+FTMS = 20ppm
+# a fragment mass tolerance was set by yourself, which default is 20 ppm.
+PIF = 0.75
+# 

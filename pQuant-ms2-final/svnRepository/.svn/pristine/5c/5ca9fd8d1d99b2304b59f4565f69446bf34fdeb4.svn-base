@@ -1,0 +1,23 @@
+﻿Build started 2015/12/24 14:11:39.
+     1>Project "D:\Source\GitHub\Tool-Develop\pQuant-ms2\pQuant-ms2\pQuant-ms2\pQuant-ms2.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         D:\Software\vs2013\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /sdl /Od /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc120.pdb" /Gd /TP /errorReport:prompt calcuPIF.cpp
+         calcuPIF.cpp
+     1>d:\source\github\tool-develop\pquant-ms2\pquant-ms2\pquant-ms2\dirent.h(606): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+       Link:
+         D:\Software\vs2013\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Source\GitHub\Tool-Develop\pQuant-ms2\pQuant-ms2\x64\Debug\pQuant-ms2.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Source\GitHub\Tool-Develop\pQuant-ms2\pQuant-ms2\x64\Debug\pQuant-ms2.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Source\GitHub\Tool-Develop\pQuant-ms2\pQuant-ms2\x64\Debug\pQuant-ms2.lib" /MACHINE:X64 x64\Debug\calcuPIF.obj
+         x64\Debug\calcuReporter.obj
+         x64\Debug\checkDate.obj
+         x64\Debug\classFunctionImplement.obj
+         x64\Debug\main.obj
+         x64\Debug\outputResult.obj
+         x64\Debug\printLogo.obj
+         x64\Debug\readCmdline.obj
+         x64\Debug\readData.obj
+         x64\Debug\stringProcess.obj
+         pQuant-ms2.vcxproj -> D:\Source\GitHub\Tool-Develop\pQuant-ms2\pQuant-ms2\x64\Debug\pQuant-ms2.exe
+     1>Done Building Project "D:\Source\GitHub\Tool-Develop\pQuant-ms2\pQuant-ms2\pQuant-ms2\pQuant-ms2.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.48

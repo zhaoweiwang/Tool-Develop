@@ -1,0 +1,42 @@
+﻿Build started 2015/12/23 15:53:39.
+     1>Project "D:\Source\GitHub\Tool-Develop\pQuant-ms2\pQuant-ms2\pQuant-ms2\pQuant-ms2.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         D:\Software\vs2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt calcuPIF.cpp calcuReporter.cpp checkDate.cpp classFunctionImplement.cpp main.cpp outputResult.cpp printLogo.cpp readCmdline.cpp readData.cpp
+         calcuPIF.cpp
+         Generating Code...
+         Compiling...
+         readData.cpp
+     1>d:\source\github\tool-develop\pquant-ms2\pquant-ms2\pquant-ms2\readdata.cpp(88): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\source\github\tool-develop\pquant-ms2\pquant-ms2\pquant-ms2\readdata.cpp(132): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\source\github\tool-develop\pquant-ms2\pquant-ms2\pquant-ms2\readdata.cpp(162): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\source\github\tool-develop\pquant-ms2\pquant-ms2\pquant-ms2\readdata.cpp(163): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\source\github\tool-develop\pquant-ms2\pquant-ms2\pquant-ms2\readdata.cpp(166): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\source\github\tool-develop\pquant-ms2\pquant-ms2\pquant-ms2\readdata.cpp(203): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\source\github\tool-develop\pquant-ms2\pquant-ms2\pquant-ms2\readdata.cpp(204): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\source\github\tool-develop\pquant-ms2\pquant-ms2\pquant-ms2\readdata.cpp(207): warning C4018: '<' : signed/unsigned mismatch
+         Generating Code...
+         Skipping... (no relevant changes detected)
+         readCmdline.cpp
+         printLogo.cpp
+         outputResult.cpp
+         main.cpp
+         classFunctionImplement.cpp
+         checkDate.cpp
+         calcuReporter.cpp
+       Link:
+         D:\Software\vs2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Source\GitHub\Tool-Develop\pQuant-ms2\pQuant-ms2\Debug\pQuant-ms2.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Source\GitHub\Tool-Develop\pQuant-ms2\pQuant-ms2\Debug\pQuant-ms2.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Source\GitHub\Tool-Develop\pQuant-ms2\pQuant-ms2\Debug\pQuant-ms2.lib" /MACHINE:X86 Debug\calcuPIF.obj
+         Debug\calcuReporter.obj
+         Debug\checkDate.obj
+         Debug\classFunctionImplement.obj
+         Debug\main.obj
+         Debug\outputResult.obj
+         Debug\printLogo.obj
+         Debug\readCmdline.obj
+         Debug\readData.obj
+         Debug\stringProcess.obj
+         pQuant-ms2.vcxproj -> D:\Source\GitHub\Tool-Develop\pQuant-ms2\pQuant-ms2\Debug\pQuant-ms2.exe
+     1>Done Building Project "D:\Source\GitHub\Tool-Develop\pQuant-ms2\pQuant-ms2\pQuant-ms2\pQuant-ms2.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.74

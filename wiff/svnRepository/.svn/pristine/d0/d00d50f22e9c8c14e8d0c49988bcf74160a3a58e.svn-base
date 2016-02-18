@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7B71F77F-72BC-4140-B859-DA3BA53A8C26}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>wiff</RootNamespace>
+    <AssemblyName>wiff</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Clearcore.Licensing">
+      <HintPath>ABdlls\Clearcore.Licensing.dll</HintPath>
+    </Reference>
+    <Reference Include="Clearcore2.Data">
+      <HintPath>ABdlls\Clearcore2.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Clearcore2.Data.AnalystDataProvider">
+      <HintPath>ABdlls\Clearcore2.Data.AnalystDataProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="Clearcore2.Data.CommonInterfaces">
+      <HintPath>ABdlls\Clearcore2.Data.CommonInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Clearcore2.Data.WiffReader">
+      <HintPath>ABdlls\Clearcore2.Data.WiffReader.dll</HintPath>
+    </Reference>
+    <Reference Include="Clearcore2.InternalRawXYProcessing">
+      <HintPath>ABdlls\Clearcore2.InternalRawXYProcessing.dll</HintPath>
+    </Reference>
+    <Reference Include="Clearcore2.Muni">
+      <HintPath>ABdlls\Clearcore2.Muni.dll</HintPath>
+    </Reference>
+    <Reference Include="Clearcore2.Processing">
+      <HintPath>ABdlls\Clearcore2.Processing.dll</HintPath>
+    </Reference>
+    <Reference Include="Clearcore2.ProjectUtilities">
+      <HintPath>ABdlls\Clearcore2.ProjectUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Clearcore2.RawXYProcessing">
+      <HintPath>ABdlls\Clearcore2.RawXYProcessing.dll</HintPath>
+    </Reference>
+    <Reference Include="Clearcore2.StructuredStorage">
+      <HintPath>ABdlls\Clearcore2.StructuredStorage.dll</HintPath>
+    </Reference>
+    <Reference Include="Clearcore2.Utility">
+      <HintPath>ABdlls\Clearcore2.Utility.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Param.cs" />
+    <Compile Include="PeakDetection.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WiffFile.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
