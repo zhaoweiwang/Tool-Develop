@@ -185,7 +185,7 @@ void getReporter(){
 	}
 	else{
 		cout << "\nQuant-parameter: " << para.quantMethod << " is not valid!" << endl;
-		cout << "Currently, we only support 1=>iTRAQ-8plex, 2=>iTRAQ-4plex, 3=>TMT-6plex!" << endl;
+		cout << "Currently, we only support 0=>iTRAQ-4plex, 1=>iTRAQ-8plex, 3=>TMT-6plex!" << endl;
 	}
 
 	para.detaFragment = (para.detaFragment)/1000000;
@@ -224,8 +224,73 @@ void getReporter(){
 		}
 	}
 	else if (1 == para.quantMethod){	//捞iTRAQ-8plex信息
+
+		for (int i = 0; i < psmVec.size(); i++){
+			for (int j = 0; j < para.reporterMZ.size(); j++){
+				double minDis = 10000.0;
+				int minDisIdx = -1;
+				for (int k = 0; k < psmVec[i].peaks.size(); k++){//A=5，B=10，B比A多100%，是（10 - 5）/5,基准一般都是真实的,被减数一般都是测量的
+					if (fabs((psmVec[i].peaks[k].mz - para.reporterMZ[j])) < para.detaFragment*para.reporterMZ[j]){
+						//cout << "进网的鱼儿: " << psmVec[i].peaks[k].mz << " " << psmVec[i].peaks[k].iten << endl;
+						if (minDis > fabs(para.reporterMZ[j] - psmVec[i].peaks[k].mz)){
+							minDis = fabs(para.reporterMZ[j] - psmVec[i].peaks[k].mz);
+							minDisIdx = k;
+							//cout << "被选中的孩子： " << psmVec[i].peaks[k].mz << endl;
+						}
+					}
+					if (psmVec[i].peaks[k].mz > para.reporterMZ[j] + 2)	break;	//离开区间了就跳掉不往下找了，节省时间
+					//getchar();
+				}
+
+				if (-1 == minDisIdx)											//这是在所开的区间内没有捞到峰的情况
+					psmVec[i].reporter.push_back(-1.0);
+				else
+					psmVec[i].reporter.push_back(psmVec[i].peaks[minDisIdx].iten * 0.1);
+			}
+
+			////输出测试
+			//cout << psmVec[i].title << endl;
+			//cout << "reporter: " << endl;
+			//for (int l = 0; l < psmVec[i].reporter.size(); l++)
+			//	cout << psmVec[i].reporter[l] << " ";
+			//cout << endl;
+			//getchar();
+		}
+
 	}
 	else if (2 == para.quantMethod){	//捞TMT-6plex信息
+
+		for (int i = 0; i < psmVec.size(); i++){
+			for (int j = 0; j < para.reporterMZ.size(); j++){
+				double minDis = 10000.0;
+				int minDisIdx = -1;
+				for (int k = 0; k < psmVec[i].peaks.size(); k++){//A=5，B=10，B比A多100%，是（10 - 5）/5,基准一般都是真实的,被减数一般都是测量的
+					if (fabs((psmVec[i].peaks[k].mz - para.reporterMZ[j])) < para.detaFragment*para.reporterMZ[j]){
+						//cout << "进网的鱼儿: " << psmVec[i].peaks[k].mz << " " << psmVec[i].peaks[k].iten << endl;
+						if (minDis > fabs(para.reporterMZ[j] - psmVec[i].peaks[k].mz)){
+							minDis = fabs(para.reporterMZ[j] - psmVec[i].peaks[k].mz);
+							minDisIdx = k;
+							//cout << "被选中的孩子： " << psmVec[i].peaks[k].mz << endl;
+						}
+					}
+					if (psmVec[i].peaks[k].mz > para.reporterMZ[j] + 2)	break;	//离开区间了就跳掉不往下找了，节省时间
+					//getchar();
+				}
+
+				if (-1 == minDisIdx)											//这是在所开的区间内没有捞到峰的情况
+					psmVec[i].reporter.push_back(-1.0);
+				else
+					psmVec[i].reporter.push_back(psmVec[i].peaks[minDisIdx].iten * 0.1);
+			}
+
+			////输出测试
+			//cout << psmVec[i].title << endl;
+			//cout << "reporter: " << endl;
+			//for (int l = 0; l < psmVec[i].reporter.size(); l++)
+			//	cout << psmVec[i].reporter[l] << " ";
+			//cout << endl;
+			//getchar();
+		}
 	}
 }
 
@@ -264,8 +329,70 @@ void correctIsotopeImpurities(){
 		}
 	}
 	else if (1 == para.quantMethod){
+
+		for (int i = 0; i < psmVec.size(); i++){
+			for (int j = 0; j < para.reporterMZ.size(); j++){
+				tempInt = 0.0;
+				if (psmVec[i].reporter[j] > 0){
+					for (int k = 0; k < para.reporterMZ.size(); k++)
+						tempInt += (psmVec[i].reporter[k] * isotopeImpuritiesSolveItraq8plex[j][k]);
+
+					if (tempInt <= 0.0){
+						tempInt = -1.0;
+						psmVec[i].reporterCorrect.push_back(tempInt);
+					}
+					else
+						psmVec[i].reporterCorrect.push_back(tempInt);
+				}
+				else{
+					psmVec[i].reporterCorrect.push_back(-1.0);
+				}
+			}
+
+			//输出测试
+			//cout << psmVec[i].title << endl;
+			//cout << "reporter: " << endl;
+			//for (int l = 0; l < psmVec[i].reporter.size(); l++)
+			//	cout << psmVec[i].reporter[l] << " ";
+			//cout << endl;
+			//for (int l = 0; l < psmVec[i].reporterCorrect.size(); l++)
+			//	cout << psmVec[i].reporterCorrect[l] << " ";
+			//cout << endl;
+			//getchar();
+		}
 	}
 	else if (2 == para.quantMethod){
+
+		for (int i = 0; i < psmVec.size(); i++){
+			for (int j = 0; j < para.reporterMZ.size(); j++){
+				tempInt = 0.0;
+				if (psmVec[i].reporter[j] > 0){
+					for (int k = 0; k < para.reporterMZ.size(); k++)
+						tempInt += (psmVec[i].reporter[k] * isotopeImpuritiesSolveTMT6plex[j][k]);
+
+					if (tempInt <= 0.0){
+						tempInt = -1.0;
+						psmVec[i].reporterCorrect.push_back(tempInt);
+					}
+					else
+						psmVec[i].reporterCorrect.push_back(tempInt);
+				}
+				else{
+					psmVec[i].reporterCorrect.push_back(-1.0);
+				}
+			}
+
+			//输出测试
+			//cout << psmVec[i].title << endl;
+			//cout << "reporter: " << endl;
+			//for (int l = 0; l < psmVec[i].reporter.size(); l++)
+			//	cout << psmVec[i].reporter[l] << " ";
+			//cout << endl;
+			//for (int l = 0; l < psmVec[i].reporterCorrect.size(); l++)
+			//	cout << psmVec[i].reporterCorrect[l] << " ";
+			//cout << endl;
+			//getchar();
+		}
 	}
 }
 

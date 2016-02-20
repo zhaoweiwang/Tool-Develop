@@ -116,7 +116,10 @@ typedef struct proteininfo{
 	string de = "";
 	double PIF = 0.0;
 	vector<double> ratio;
-	//vector<double> inten;
+	vector<double> ratioCorrect;
+	vector<double> inten;
+	vector<double> intenCorrect;
+
 	string tag = "";
 	string led = "";
 	set<string> peptide;

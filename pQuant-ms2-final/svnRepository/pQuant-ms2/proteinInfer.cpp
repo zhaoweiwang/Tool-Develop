@@ -57,7 +57,7 @@ void readFasta(){
 
 void proteinMap(){
 	for (int i = 0; i < psmVec.size(); i++){
-		if ((psmVec[i].PIF - PIF) >= 0){
+		if ((psmVec[i].PIF - para.PIF) >= 0){					//卡PIF，大于用户设置的PSM才有效
 			string tempStr = psmVec[i].proAc;
 			while (tempStr.find('/') != string::npos){
 				string acTemp = tempStr.substr(0, tempStr.find('/'));
@@ -110,28 +110,12 @@ void calcuPro(){
 		for (int i = 0; i < iter->second.size(); i++)
 			tempPro.peptide.insert(psmVec[iter->second[i]].pepSq);
 
-		////计算PSMs的Ratio中位数，用以作蛋白的Ratio，因为用到排序，所以用空间换时间
-		//vector<double> tempRatio;
-		//for (int i = 0; i < psmVec[0].ratioReporter.size(); i++){
-		//	tempRatio.clear();
-		//	for (int j = 0; j < iter->second.size(); j++){
-		//		tempRatio.push_back(psmVec[iter->second[j]].ratioReporter[i]);
-		//	}
-		//	sort(tempRatio.begin(), tempRatio.end(), comp);
-		//	size_t size = iter->second.size();
-		//	if (size % 2 == 0)
-		//		tempPro.ratio.push_back((tempRatio[size / 2 - 1] + tempRatio[size / 2]) / 2.0);
-		//	else
-		//		tempPro.ratio.push_back(tempRatio[size / 2]);
-		//}
-
-		//计算PSMs的標籤離子強度的中位数，用以作蛋白質的強度量；
-		//因为用到排序，所以用空间换时间
+		//计算PSMs的Ratio中位数，用以作蛋白的Ratio，因为用到排序，所以用空间换时间
 		vector<double> tempRatio;
-		for (int i = 0; i < psmVec[0].reporterCorrect.size(); i++){
+		for (int i = 0; i < psmVec[0].ratioReporter.size(); i++){
 			tempRatio.clear();
 			for (int j = 0; j < iter->second.size(); j++){
-				tempRatio.push_back(psmVec[iter->second[j]].reporterCorrect[i]);
+				tempRatio.push_back(psmVec[iter->second[j]].ratioReporter[i]);
 			}
 			sort(tempRatio.begin(), tempRatio.end(), comp);
 			size_t size = iter->second.size();
@@ -139,6 +123,53 @@ void calcuPro(){
 				tempPro.ratio.push_back((tempRatio[size / 2 - 1] + tempRatio[size / 2]) / 2.0);
 			else
 				tempPro.ratio.push_back(tempRatio[size / 2]);
+		}
+
+		//计算PSMs的RatioCorrect，用以作蛋白的RatioCorrect，因为用到排序，所以用空间换时间
+		vector<double> tempRatioCorrect;
+		for (int i = 0; i < psmVec[0].ratioReporterCorrect.size(); i++){
+			tempRatioCorrect.clear();
+			for (int j = 0; j < iter->second.size(); j++){
+				tempRatioCorrect.push_back(psmVec[iter->second[j]].ratioReporterCorrect[i]);
+			}
+			sort(tempRatioCorrect.begin(), tempRatioCorrect.end(), comp);
+			size_t size = iter->second.size();
+			if (size % 2 == 0)
+				tempPro.ratioCorrect.push_back((tempRatioCorrect[size / 2 - 1] + tempRatioCorrect[size / 2]) / 2.0);
+			else
+				tempPro.ratioCorrect.push_back(tempRatioCorrect[size / 2]);
+		}
+
+		//计算PSMs的標籤離子強度的中位数，用以作蛋白質的強度量；
+		//因为用到排序，所以用空间换时间
+		vector<double> tempCorrectReporter;
+		for (int i = 0; i < psmVec[0].reporterCorrect.size(); i++){
+			tempCorrectReporter.clear();
+			for (int j = 0; j < iter->second.size(); j++){
+				tempCorrectReporter.push_back(psmVec[iter->second[j]].reporterCorrect[i]);
+			}
+			sort(tempCorrectReporter.begin(), tempCorrectReporter.end(), comp);
+			size_t size = iter->second.size();
+			if (size % 2 == 0)
+				tempPro.intenCorrect.push_back((tempCorrectReporter[size / 2 - 1] + tempCorrectReporter[size / 2]) / 2.0);
+			else
+				tempPro.intenCorrect.push_back(tempCorrectReporter[size / 2]);
+		}
+
+		//计算PSMs的標籤離子強度的中位数，用以作蛋白質的強度量；
+		//因为用到排序，所以用空间换时间
+		vector<double> tempReporter;
+		for (int i = 0; i < psmVec[0].reporter.size(); i++){
+			tempReporter.clear();
+			for (int j = 0; j < iter->second.size(); j++){
+				tempReporter.push_back(psmVec[iter->second[j]].reporter[i]);
+			}
+			sort(tempReporter.begin(), tempReporter.end(), comp);
+			size_t size = iter->second.size();
+			if (size % 2 == 0)
+				tempPro.inten.push_back((tempReporter[size / 2 - 1] + tempReporter[size / 2]) / 2.0);
+			else
+				tempPro.inten.push_back(tempReporter[size / 2]);
 		}
 
 

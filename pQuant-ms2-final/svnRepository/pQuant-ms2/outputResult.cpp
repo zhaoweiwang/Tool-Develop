@@ -1,4 +1,5 @@
 #include "Head.h"
+#include "iomanip"
 
 extern parainfo para;
 extern vector<psmInfo> psmVec;					//PSM缓冲区
@@ -9,8 +10,7 @@ void outputPsms(){
 	ofstream out(para.output_ratio_path.c_str());
 	if (!out.is_open()){
 		cout << "Error opening file" << endl; exit(1);
-	}
-	else{
+	}else{
 		cout << "Successfully open the file of " << para.output_ratio_path << "." << endl;
 	}
 
@@ -28,7 +28,7 @@ void outputPsms(){
 			<< psmVec[i].modification << "\t" << psmVec[i].proAc << "\t";
 		for (int j = 0; j < psmVec[i].reporter.size(); j++) out << psmVec[i].reporter[j] << "\t";
 		for (int j = 0; j < psmVec[i].reporterCorrect.size(); j++) out << psmVec[i].reporterCorrect[j] << "\t";
-		out << psmVec[i].PIF << "\t";
+		out << setiosflags(ios::fixed) << setprecision(7) << psmVec[i].PIF << "\t";
 		for (int j = 0; j < psmVec[i].ratioReporter.size(); j++) out << psmVec[i].ratioReporter[j] << "\t";
 		for (int j = 0; j < psmVec[i].ratioReporterCorrect.size(); j++) out << psmVec[i].ratioReporterCorrect[j] << "\t";
 		out << endl;
@@ -59,13 +59,20 @@ void outputProtein(){
 	}
 
 	//out << "Ac\tDe\tPsmNum\tPepNum\tTag\tLeadinPro\t";
+	//输出表头
 	out << "Ac\tDe\tUniquePeptide";
-	for (int i = 0; i < psmVec[0].reporterCorrect.size(); i++) out << "\t" << "Inten" + to_string(i);
+	for (int i = 0; i < proteinVec[0].intenCorrect.size(); i++) out << "\t" << "IntenCorrect" + to_string(i);
+	for (int i = 0; i < proteinVec[0].ratioCorrect.size(); i++) out << "\t" << "RatioCorrect" + to_string(i);
+	for (int i = 0; i < proteinVec[0].inten.size(); i++) out << "\t" << "Inten" + to_string(i);
+	for (int i = 0; i < proteinVec[0].ratio.size(); i++) out << "\t" << "Ratio" + to_string(i);
 	out << endl;
 
 
 	for (int i = 0; i < proteinVec.size(); i++){
 		out << proteinVec[i].ac << "\t" << proteinVec[i].de << "\t" << proteinVec[i].uniqueNum;
+		for (int j = 0; j < proteinVec[i].intenCorrect.size(); j++) out << "\t" << proteinVec[i].intenCorrect[j];
+		for (int j = 0; j < proteinVec[i].ratioCorrect.size(); j++) out << "\t" << proteinVec[i].ratioCorrect[j];
+		for (int j = 0; j < proteinVec[i].inten.size(); j++) out << "\t" << proteinVec[i].inten[j];
 		for (int j = 0; j < proteinVec[i].ratio.size(); j++) out << "\t" << proteinVec[i].ratio[j];
 		out << endl;
 	}
@@ -77,10 +84,10 @@ void outputResult(){
 
 	cout << "\nStep9: Output .spectra and .protein file." << endl;
 
-	//outputPsms();
+	outputPsms();
 	outputProtein();
 
 	//cout << "\nThat`s all, you can see What you want in the pQuant-ms2_Result.spectra." << endl;
-	cout << "And you can see more information in the pQuant-ms2_Result.protein." << endl;
+	cout << "And you can see more information in the pQuant-ms2_Result.protein." << endl << endl;
 	
 }

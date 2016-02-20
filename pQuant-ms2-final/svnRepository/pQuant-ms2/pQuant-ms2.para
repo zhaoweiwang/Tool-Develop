@@ -13,7 +13,7 @@ quantResultDatapath = D:\Source\GitHub\Tool-Develop\pQuant-ms2-final\svnReposito
 quantitativeMethod = 0
 # 0, quantitative method: iTRAQ-4plex;
 # 1, quantitative method: iTRAQ-8plex;
-# 1, quantitative method: TMT-6plex.
+# 2, quantitative method: TMT-6plex;
 reporterIonMZ = 114.111, 115.111, 116.111, 117.111
 # you could customize the reporter ion M/Z.
 # e.g. iTRAQ-4plex: 114.110, 115.110, 116.110, 117.110.
