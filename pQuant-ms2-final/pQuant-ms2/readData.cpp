@@ -299,6 +299,18 @@ void calpIDL(){
 				double bmass1 = tmpmass + B_Mass + massZI;
 				double mass_error = 0.0;
 				int index = -1;
+				index = getpIDLplex(bmass1, mass_inten, mass_error, i);
+
+				tmp.mz = bmass1;
+				tmp.iten = 0.0;
+				if (index != -1)
+					peaks[j].push_back(psmVec[i].peaks[index]);
+				else
+					peaks[j].push_back(tmp);
+
+				double bmass2 = (tmpmass + B_Mass + 2 * massZI) / 2.0;
+				index = getpIDLplex(bmass2, mass_inten, mass_error);
+
 
 			}
 
