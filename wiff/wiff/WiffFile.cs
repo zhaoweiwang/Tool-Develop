@@ -220,6 +220,11 @@ namespace wiff
 
         public void WriteMS2(StreamWriter writer)
         {
+            //Console.WriteLine("\n");
+            //string wifftitle = "Locus:" + "1.1.1." + this.cycle + "." + this.experiment;
+            //Console.WriteLine("pFindTitle:" + "S\t" + this.scan.ToString("D6") + "\t" + this.scan.ToString("D6") + "\t" + this.precursor_mz.ToString("G10"));
+            //Console.WriteLine("WIFFTITILE=" + wifftitle);
+            //Console.Read();
             //写ms2信息
             writer.WriteLine("S\t" + this.scan.ToString("D6") + "\t" + this.scan.ToString("D6") + "\t" + this.precursor_mz.ToString("G10"));
             writer.WriteLine("I\tNumberOfPeaks\t" + this.mz.Count);
@@ -275,7 +280,9 @@ namespace wiff
             writer.WriteLine("BEGIN IONS");
             writer.WriteLine("TITLE=" + title);
             //string wifftitle = "Locus:" + "1.1.1." + this.cycle + "." + this.experiment;
-            //writer.WriteLine("WIFFTITILE=" + wifftitle);
+            //Console.WriteLine("pFindTitle:" + title);
+            //Console.WriteLine("WIFFTITILE=" + wifftitle);
+            //Console.Read();
             //if (this.charge != 0)
             //{
             //    writer.WriteLine("CHARGE=" + this.charge + "+");

@@ -157,5 +157,5 @@ void calcuReporter(){
 	}
 
 	//º∆À„median
-	calMedianStd();
+	//calMedianStd();
 }

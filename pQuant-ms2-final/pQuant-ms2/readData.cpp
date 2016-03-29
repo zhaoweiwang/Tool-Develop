@@ -3,11 +3,13 @@
 extern parainfo para;
 double fdr = 0.0;
 
+extern unordered_map<string, double> mod2mass;
+
 //vector<vector<int>> pf2Vec;			//pf2idx缓冲区
 unordered_map<int, int> mapScanPos;		//改用哈希
 vector<psmInfo> psmVec;					//PSM缓冲区
 
-vector<string> reType{ "iTRAQ-4plex", "iTRAQ-8plex", "TMT-6plex"};
+vector<string> reType{ "iTRAQ-4plex", "iTRAQ-8plex", "TMT-6plex", "TMT-10plex", "pIDL-Nplex"};
 vector<double> iTRAQ4{ 114.1, 115.1, 116.1, 117.1 };
 vector<double> iTRAQ8{ 113.1, 114.1, 115.1, 116.1, 117.1, 118.1, 119.1, 121.1 };
 vector<double> TMT{ 126.127726, 127.131080, 128.134435, 129.137790, 130.141145, 131.138180 };
@@ -37,10 +39,18 @@ double isotopeImpuritiesSolveTMT6plex[][6] = {
 	{ -3.45261249481356e-07, 4.4292086004894e-05, -0.0199366669439801, 1.08995311280806, -0.0717456501349052, 0.00169308687925649 },
 	{ -1.31806793005487e-08, 1.69089285884182e-06, -0.000761101379622512, -0.0222333537299289, 1.08259814509038, -0.0614089921803927 },
 	{ 8.94940725219551e-10, -1.14808110178165e-07, 5.16772015397277e-05, -0.000316105216736487, -0.0424692004073348, 1.09411466226159 }
-
 };
 
 const bool bCorrect = true;
+
+const double massZI = 1.00727647012;		//质子质量
+
+vector<double> MassTable = { 71.03711, 166.99836, 103.00919, 115.02694, 129.04259, 147.06841, 57.02146, 137.05891, 113.08406, 181.01401, 128.09496, 113.08406, 131.04048, 114.04293, 243.02965, 97.05276, 128.05858, 156.10111, 87.03203, 101.04768, 0.00000, 99.06841, 186.07931, 113.08406, 163.06332, 128.55059 };
+
+const double massO = 15.99491463;
+const double massC = 12.00000;
+const double A_Mass = - massC - massO;
+const double B_Mass = 0.0;
 
 void readPf2idx(){
 
@@ -55,9 +65,6 @@ void readPf2idx(){
 		if (inputPf2idx == NULL){
 			cout << "Failed to open " << psmVec[i].pf2idx << " File." << endl;
 		}
-		//else{
-		//	cout << psmVec[i].pf2idx << " File open successfully.\n" << endl;
-		//}
 
 		while (!feof(inputPf2idx)){
 			fread(&scan, sizeof(int), 1, inputPf2idx);
@@ -78,8 +85,10 @@ void readPsms(){
 
 	ifstream input_spectra;
 	input_spectra.open(para.input_spectra_path, ios::binary);
+
 	if (!input_spectra.is_open()){
 		cout << "Failed to open " << para.input_spectra_path << " File." << endl;
+		exit(0);
 	}else{
 		cout << para.input_spectra_path << " File open successfully." << endl;
 	}
@@ -107,7 +116,7 @@ void readPsms(){
 			if (tempPsm.substr(t_pos[14] + 1, t_pos[15] - t_pos[14] - 1) == "decoy")	  //TODO: 如果有污染库则需要加；
 				continue;
 
-			psm.title = tempPsm.substr(0, t_pos[0] - 1);
+			psm.title = tempPsm.substr(0, t_pos[0]);
 			psm.scan = atoi(tempPsm.substr(t_pos[0] + 1, t_pos[1] - t_pos[0] - 1).c_str());
 
 			psm.pf1idx = psm.title.substr(0, psm.title.find('.')) + ".pf1idx";
@@ -158,9 +167,6 @@ void readPf2(){
 		if (!input_pf2.is_open()){
 			cout << "Failed to open " << psmVec[i].pf2 << " File." << endl;
 		}
-		//else{
-		//	cout << psmVec[i].pf2 << " File open successfully." << endl;
-		//}
 
 		input_pf2.seekg(psmVec[i].pf2Pos + sizeof(int), ios::beg);
 		input_pf2.read((char*)&psmVec[i].peakNums, sizeof(int));
@@ -175,20 +181,148 @@ void readPf2(){
 		input_pf2.close();
 	}
 
-	cout << "Successfully read pf2 File." << endl;
+	cout << "Successfully read all .pf2 File." << endl;
+}
+
+int getpIDLplex(double mass, int *mass_inten, double &mass_error, int i){
+	int start = (int)(mass - mass*para.detaFragment);
+	int end = (int)(mass + mass*para.detaFragment);
+	if (start <= 0 || end >= 10000)
+		return -1;
+	double max_intensity = DBL_MIN;
+	int max_k = -1;
+	for (int k = mass_inten[start - 1]; k < mass_inten[end]; ++k){
+		double tmpd_error = fabs(((psmVec[i].peaks[k].mz - mass) / mass));
+		double tmpd = psmVec[i].peaks[k].iten;
+		if (tmpd_error <= para.detaFragment && tmpd > max_intensity){
+			max_intensity = tmpd;
+			max_k = k;
+		}
+	}
+
+	if (max_k != -1){
+		mass_error = (psmVec[i].peaks[max_k].mz - mass) * 1.0e6 / mass;
+	}
+
+	return max_k;
+}
+
+void calpIDL(){
+	for (int i = 0; i < psmVec.size(); ++i){
+		
+		cout << psmVec[i].pepSq << endl;
+		cout << psmVec[i].modification << endl;
+
+		vector<vector<peakInfo>> peaks;
+		peaks.resize(para.pIDLplex.size());
+
+		modificationInfo singleMod;
+		if (!psmVec[i].modification.empty()){
+			string tempMod = psmVec[i].modification;
+			while (tempMod.find(';') != string::npos){
+				string temp = tempMod.substr(0, tempMod.find(','));
+				singleMod.index = atoi(temp.c_str());
+
+				temp = tempMod.substr(tempMod.find(',')+1, tempMod.find(';') - tempMod.find(',')-1);
+				singleMod.name = temp;
+				singleMod.mass = mod2mass[temp];
+				psmVec[i].mod.push_back(singleMod);
+				tempMod = tempMod.substr(tempMod.find(';') + 1);
+			}
+		}
+
+		vector<double> all_mass;							//all_mass存用户设置的修饰质量对
+		for (int j = 0; j < para.pIDLplex.size(); ++j){
+			all_mass.push_back(para.pIDLplex[j].massN);
+			all_mass.push_back(para.pIDLplex[j].massC);
+		}
+
+		vector<double> mod_mass;							//mod_mass存肽段氨基酸修饰发生与否质量表
+		for (int j = 0; j < psmVec[i].pepSq.size()+2; j++){
+			mod_mass.push_back(0.0);
+		}
+		const double minGap = 0.00001;
+		for (int j = 0; j < psmVec[i].mod.size(); j++){
+			bool inFlag = false;
+			for (int k = 0; k < all_mass.size(); ++k){
+				if (fabs(all_mass[k] - psmVec[i].mod[j].mass) <= minGap){
+					inFlag = true;
+					break;
+				}
+			}
+			if (!inFlag)
+				mod_mass[psmVec[i].mod[j].index] = psmVec[i].mod[j].mass;
+		}
+
+
+		int mass_inten[10000] = {0};
+		for (int j = 0; j < psmVec[i].peaks.size(); ++j){
+			int massi = (int)(psmVec[i].peaks[j].mz);
+			mass_inten[massi] = j + 1;
+		}
+		int currindex = 0;
+		for (int j = 0; j < 10000; ++j){
+			if (mass_inten[j] == 0)
+				mass_inten[j] = currindex;
+			else
+				currindex = mass_inten[j];
+		}
+
+		//开始捞谱峰
+		for (int j = 0; j < para.pIDLplex.size(); ++j){
+			mod_mass[0] = para.pIDLplex[j].massN;
+			for (int k = 0; k < psmVec[i].pepSq.size(); ++k){
+				if (psmVec[i].pepSq[k] == 'K' || psmVec[i].pepSq[k] == 'k')
+					mod_mass[k + 1] = para.pIDLplex[j].massC;
+			}
+
+
+			double tmpmass = mod_mass[0];
+			double a1 = tmpmass + MassTable[psmVec[i].pepSq[0] - 'A'] + mod_mass[1] + A_Mass + massZI;
+			double mass_error0 = 0.0;
+			int index0 = -1;
+			index0 = getpIDLplex(a1, mass_inten, mass_error0, i);
+
+			peakInfo tmp;
+			tmp.mz = a1;
+			tmp.iten = 0.0;
+			if (index0 != -1)
+				peaks[j].push_back(psmVec[i].peaks[index0]);
+			else
+				peaks[j].push_back(tmp);
+
+			cout << a1 << ":" << psmVec[i].peaks[index0].iten << endl;
+
+			//获取b离子列表
+			for (int k = 0; k < psmVec[i].pepSq.size(); ++k){
+				tmpmass += MassTable[psmVec[i].pepSq[k] - 'A'] + mod_mass[k + 1];
+				double bmass1 = tmpmass + B_Mass + massZI;
+				double mass_error = 0.0;
+				int index = -1;
+
+			}
+
+			getchar();
+			
+		}
+
+		getchar();
+	}
 }
 
 void getReporter(){
 
-	if (para.quantMethod > -1 && para.quantMethod < 3){
+	if (para.quantMethod > -1 && para.quantMethod < 5){
 		cout << "\nStep4: Get " << reType[para.quantMethod] << " reporter-ion`s intensity." << endl;
 	}
 	else{
 		cout << "\nQuant-parameter: " << para.quantMethod << " is not valid!" << endl;
-		cout << "Currently, we only support 1=>iTRAQ-8plex, 2=>iTRAQ-4plex, 3=>TMT-6plex!" << endl;
+		cout << "Currently, we only support 0=>iTRAQ-4plex, 1=>iTRAQ-6plex, 2=>TMT-6plex, 3=>TMT-10plex, 4=>pIDL-nplex!" << endl << endl;
+		exit(0);
 	}
 
 	para.detaFragment = (para.detaFragment)/1000000;
+
 	if (0 == para.quantMethod){									//捞iTRAQ-4plex信息
 
 		for (int i = 0; i < psmVec.size(); i++){
@@ -224,8 +358,22 @@ void getReporter(){
 		}
 	}
 	else if (1 == para.quantMethod){	//捞iTRAQ-8plex信息
+
 	}
 	else if (2 == para.quantMethod){	//捞TMT-6plex信息
+
+	}
+	else if (3 == para.quantMethod){
+	
+	}
+	else if (4 == para.quantMethod){
+		
+		readModification();				//获取修饰-质量表
+		cout << "hello" << endl;
+		calpIDL();
+
+		//getchar();
+	
 	}
 }
 
@@ -273,20 +421,15 @@ void correctIsotopeImpurities(){
 
 void readData(){
 
-	//Step1: 再将.spectra所有PSMload到内存中；
-	readPsms();
+	readPsms();							//Step1: 再将.spectra所有PSMload到内存中
 
-	//Step2: 获取每个PSM的pf2pos；
-	readPf2idx();
+	readPf2idx();						//Step2: 获取每个PSM的pf2pos
 
-	//Step3: 读取pf2获取所有谱峰信息；
-	readPf2();
+	readPf2();							//Step3: 读取pf2获取所有谱峰信息
 
-	//Step4: 获取Reporter峰信息；
-	getReporter();
+	getReporter();						//Step4: 获取Reporter峰信息
 
-	//Step5: 矫正reporter ions强度；
-	if (para.correct){			//矫正reporter ions强度，由试剂厂商提供（参考iQuant）；
-		correctIsotopeImpurities();
+	if (para.correct && (para.quantMethod == 0 || para.quantMethod == 1 || para.quantMethod == 2)){					
+		correctIsotopeImpurities();		//Step5: 矫正reporter ions强度
 	}
 }

@@ -77,10 +77,10 @@ void outputResult(){
 
 	cout << "\nStep9: Output .spectra and .protein file." << endl;
 
-	//outputPsms();
-	outputProtein();
+	outputPsms();
+	//outputProtein();
 
-	//cout << "\nThat`s all, you can see What you want in the pQuant-ms2_Result.spectra." << endl;
+	cout << "\nThat`s all, you can see What you want in the pQuant-ms2_Result.spectra." << endl;
 	cout << "And you can see more information in the pQuant-ms2_Result.protein." << endl;
 	
 }

@@ -48,6 +48,9 @@
     <ClCompile Include="proteinInfer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="readModification.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Head.h">

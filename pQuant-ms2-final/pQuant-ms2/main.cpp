@@ -17,11 +17,11 @@ int main(int argc, char* argv[]){
 
 	readData();					//获取標記離子的信息；
 
-	//calcuReporter();			//计算比值、中位数和标准差；
+	calcuReporter();			//计算比值、中位数和标准差；
 
-	calcuPIF();					//计算PIF；
+	//calcuPIF();				//计算PIF；
 
-	proteinInfer();				//蛋白归并；
+	//proteinInfer();			//蛋白归并；
 
 	outputResult();				//输出PSM层级的结果；
 

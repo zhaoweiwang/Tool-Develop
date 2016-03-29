@@ -28,7 +28,7 @@ namespace wiff
             StreamWriter writerms2 = null; 
             StreamWriter writermgf = null;
 
-            string flagMsFileName = ms1file.Substring(0, ms1file.LastIndexOf('.')) + ".Xtract";
+            string flagMsFileName = ms1file.Substring(0, ms1file.LastIndexOf('.')) + ".xtract";
 
             if (para.ms1 == 1)
             {
@@ -62,7 +62,15 @@ namespace wiff
                         spec.cycle = j + 1;
                         spec.experiment = i + 1;
                         spec.m_msExperiment = spec.wiffExperiments[i];
-                        spec.m_spectrum = spec.m_msExperiment.GetMassSpectrum(j);
+                        //spec.m_spectrum = spec.m_msExperiment.GetMassSpectrum(j);
+                        try
+                        {
+                            spec.m_spectrum = spec.m_msExperiment.GetMassSpectrum(j);
+                        }
+                        catch (System.Exception e)
+                        {
+                            continue;
+                        }
                         spec.details = spec.m_msExperiment.Details;
                         spec.m_spectrumInfo = spec.m_msExperiment.GetMassSpectrumInfo(j);
                         spec.pointsAreContinuous = !spec.m_spectrumInfo.CentroidMode;

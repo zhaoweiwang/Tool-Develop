@@ -28,7 +28,12 @@ namespace wiff
             StreamWriter writerms2 = null; 
             StreamWriter writermgf = null;
 
-            string flagMsFileName = ms1file.Substring(0, ms1file.LastIndexOf('.')) + ".Xtract";
+            //TODO: 输出Locus2Scan的哈希表
+            StreamWriter writerLocus2Scan = null;
+            string locus2scanName = ms1file.Substring(0, ms1file.LastIndexOf('.')) + ".Locus2Scan";
+            writerLocus2Scan = new StreamWriter(new FileStream(locus2scanName, FileMode.Create, FileAccess.Write));
+
+            string flagMsFileName = ms1file.Substring(0, ms1file.LastIndexOf('.')) + ".xtract";
 
             if (para.ms1 == 1)
             {
@@ -62,7 +67,15 @@ namespace wiff
                         spec.cycle = j + 1;
                         spec.experiment = i + 1;
                         spec.m_msExperiment = spec.wiffExperiments[i];
-                        spec.m_spectrum = spec.m_msExperiment.GetMassSpectrum(j);
+                        //spec.m_spectrum = spec.m_msExperiment.GetMassSpectrum(j);
+                        try
+                        {
+                            spec.m_spectrum = spec.m_msExperiment.GetMassSpectrum(j);
+                        }
+                        catch (System.Exception e)
+                        {
+                            continue;
+                        }
                         spec.details = spec.m_msExperiment.Details;
                         spec.m_spectrumInfo = spec.m_msExperiment.GetMassSpectrumInfo(j);
                         spec.pointsAreContinuous = !spec.m_spectrumInfo.CentroidMode;
@@ -102,16 +115,18 @@ namespace wiff
                                 if (para.ms2 == 1)
                                 {
                                     spec.WriteMS2(writerms2);
-
-                                    //写出.Xtract文件作为导出flag.
-                                    FileStream flagMsFile = new FileStream(flagMsFileName, FileMode.Create, FileAccess.Write);
-                                    flagMsFile.Close();
-
                                 }
                                 if (para.mgf == 1)
                                 {
                                     spec.WriteMGF(wifffile,writermgf);
                                 }
+
+                                //TODO: 输出locus2scan哈希表
+                                string wifftitle = "Locus:" + "1.1.1." + spec.cycle + "." + spec.experiment;
+                                //Console.WriteLine("WiffTitle:"+wifftitle);
+                                //Console.WriteLine("Scan:"+spec.scan);
+                                //Console.Read();
+                                writerLocus2Scan.WriteLine(wifftitle+" "+spec.scan);
                             }
                         }
                     }
@@ -129,6 +144,11 @@ namespace wiff
             {
                 writermgf.Close();
             }
+            //写出.Xtract文件作为导出flag.
+            FileStream flagMsFile = new FileStream(flagMsFileName, FileMode.Create, FileAccess.Write);
+            flagMsFile.Close();
+
+            writerLocus2Scan.Close();
 
             Console.WriteLine();
         }

@@ -21,6 +21,10 @@
 #include <set>
 #include <algorithm>
 #include <windows.h>
+#include <iomanip>
+#include <WinNT.h>
+#include <tchar.h>
+#include <float.h>
 // Attention:
 // If you use visual studio cl.exe compiler, use this header file
 #include "dirent.h"
@@ -32,30 +36,44 @@ using namespace std;
 
 //自定义变量区
 
-typedef struct parainfo{
+typedef struct modificationinfo{
+	string name = "";
+	double mass = 0.0;
+	int index = 0;
+}modificationInfo;
 
+typedef struct pIDLplexinfo{
+	string modN = "";
+	double massN = 0.0;
+
+	string modC = "";
+	double massC = 0.0;
+}pIDLplexInfo;
+
+typedef struct parainfo{
 	string binPath = ".\\";
 
-	int quantMethod = 0;						//1-3代表iTRAQ4、iTRAQ8、TMT
-	double detaFragment = 0.0;					//搜索窗口大小
-	vector<double> reporterMZ;
+	int quantMethod = 0;						//0-3代表iTRAQ4、iTRAQ8、TMT6和TMT10，4代表pIDL方法
+	double detaFragment = 200.0;				//搜索窗口大小
+	vector<double> reporterMZ;					//iTRAQ、TMT报告离子MZ
+	vector<pIDLplexInfo> pIDLplex;				//pIDL标记列表
 
-	string input_spectra_path = "";				//pFind.spectra结果文件，作为输入文件；
+	string input_spectra_path = "";				//pFind.spectra结果文件，作为输入文件
 	string input_protein_path = "";
-	string pf_path = "";						//pf2文件路径；
-	string pfidx_path = "";						//pf2idx文件路径;
-	string pf1_path = "";						//pf1文件路径；
-	string pf1idx_path = "";					//pf1idx文件路径；
-	string output_ratio_path = "";				//定量比值输出路径；
+	string pf_path = "";						//pf2文件路径
+	string pfidx_path = "";						//pf2idx文件路径
+	string pf1_path = "";						//pf1文件路径
+	string pf1idx_path = "";					//pf1idx文件路径
+	string output_ratio_path = "";				//定量比值输出路径
 
-	string fasta_path = "";						//fasta文件路径；
+	string fasta_path = "";						//fasta文件路径
+	string modification_path = "";				//modification.ini文件路径
 
-	double PIF = 0.75;							//PIF值；
-	double PsmFDR = 0.01;						//PSM层次卡的FDR值；
-	double ProteinFDR = 0.01;					//Protein层次卡的FDR值；
+	double PIF = 0.75;							//PIF值
+	double PsmFDR = 0.01;						//PSM层次卡的FDR值
+	double ProteinFDR = 0.01;					//Protein层次卡的FDR值
 
-	bool correct = true;						//是否使用校正矩阵；
-
+	bool correct = true;						//是否使用校正矩阵
 }paraInfo;
 
 //谱峰
@@ -66,13 +84,12 @@ typedef struct peakinfo{
 
 //包含一个psm需要的全部信息
 typedef struct psminfo{
-
 	string	title			= "";
 
-	string pf1idx = "";
-	string pf1 = "";
-	string pf2idx = "";
-	string pf2 = "";
+	string pf1idx			= "";
+	string pf1				= "";
+	string pf2idx			= "";
+	string pf2				= "";
 
 	int		scan			= 0;
 	double	mass1			= 0.0;
@@ -87,6 +104,7 @@ typedef struct psminfo{
 	string	proAc			= "";
 	string	prosandCons		= "";
 
+	vector<modificationInfo> mod;
 	vector<peakInfo> peaks;
 
 	//Reporter区
@@ -103,20 +121,17 @@ typedef struct psminfo{
 	double PIF = 0.0;
 	int precuNums = 0;
 	vector<peakInfo> precus;
-	//vector<peakInfo> peaksPrecusor;
+
 
 	//TODO: 利用继承派生出各种定量方法类
-
 }psmInfo;
 
 typedef struct proteininfo{
-
 	string ac = "";
 	vector<int> index;
 	string de = "";
 	double PIF = 0.0;
 	vector<double> ratio;
-	//vector<double> inten;
 	string tag = "";
 	string led = "";
 	set<string> peptide;
@@ -124,7 +139,6 @@ typedef struct proteininfo{
 	int psmNum = 0;
 	int pepNum = 0;
 	int uniqueNum = 0;
-
 }proteinInfo;
 
 typedef struct rela{
@@ -139,23 +153,19 @@ public:
 };
 
 class A{
-
 public:
 	int a = 1;
 	void showInfo(){
 		cout << "This is " << this->a << endl;
 	}
-
 };
 
 class B : public A{
-
 public:
 	int b = 2;
 	void showInfo(){
 		cout << "This is " << this->b << endl;
 	}
-	//in this case, class B also have int a menber;
 };
 
 //参数区
@@ -228,5 +238,14 @@ void proteinInfer();
 返回：	无
 */
 void outputResult();
+
+/*
+函数名：	readModification
+功能：	读取modification.ini文件，获取修饰-质量的哈希表；
+输入：	无
+返回：	无
+*/
+void readModification();
+
 
 #endif

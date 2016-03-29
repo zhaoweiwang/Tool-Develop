@@ -1,22 +1,33 @@
 # pQuant-ms2.para params template
-# For help: mail to wangzhaowei@ict.ac.cn 
+# For help: mail to pFind@ict.ac.cn 
 # Time: 2015.10.27
 
 [Basic Options]
-resultDatapath = D:\Issues\pFindWorkspace\20160125_Tuber_GroupA\result\pFind.spectra
-pfDatapath = D:\Issues\Dataset\20160125_tuber\GroupAraw\
+resultDatapath = D:\Issues\Dataset\20160328_zhouyuan_IPL_quant\PP1_1-01\34L_result\result\pFind.spectra
+pfDatapath = D:\Issues\Dataset\20160328_zhouyuan_IPL_quant\PP1_1-01\
 # you need to add the path of pf files which output by pParse.
-fastaDatapath = D:\Issues\Dataset\20160125_tuber\fasta\uniprot-human-201506.fasta
-quantResultDatapath = D:\Source\GitHub\Tool-Develop\pQuant-ms2-final\svnRepository\pQuant-ms2\pQuant-ms2_Result.spectra
+quantResultDatapath = D:\Issues\Dataset\20160328_zhouyuan_IPL_quant\PP1_1-01\34L_result\result\
 
-[Advanced Options]
-quantitativeMethod = 0
+[Database Options]
+fastaDatapath = D:\Issues\Dataset\20160328_zhouyuan_IPL_quant\HUMAN-20150409\HUMAN-20150409.fasta
+modificationDatapath = D:\Software\pFind3\pFindStudio\bin\modification.ini
+
+[Method Options]
+quantitativeMethod = 4
 # 0, quantitative method: iTRAQ-4plex;
 # 1, quantitative method: iTRAQ-8plex;
-# 1, quantitative method: TMT-6plex.
-reporterIonMZ = 114.111, 115.111, 116.111, 117.111
+# 2, quantitative method: TMT-6plex.
+# 3, quantitative method: TMT-10plex.
+# 4, quantitative method: pIDL.
+# According to your choice to set the following parameter.
+reporterIonMZ = 114.110, 115.110, 116.110, 117.110
 # you could customize the reporter ion M/Z.
 # e.g. iTRAQ-4plex: 114.110, 115.110, 116.110, 117.110.
+pIDLplex = Dim34NL 34.063119, Dim34KL 34.063119; Dim34NH 34.068963, Dim34KH 34.068963
+# If you use pIDL method, customize the Modification-Mass of N-item and C-item.
+# e.g. pIDL-2: Dim34NL 34.063119, Dim34KL 34.063119; Dim34NH 34.068963, Dim34KH 34.068963;
+
+[Advanced Options]
 FTMS = 200ppm
 # a fragment mass tolerance was set by yourself, which default is 20 ppm.
 PIF = 0.75
