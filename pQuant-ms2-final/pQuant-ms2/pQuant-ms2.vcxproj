@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="calcuPIF.cpp" />
     <ClCompile Include="calcuReporter.cpp" />
+    <ClCompile Include="calVSN.cpp" />
     <ClCompile Include="checkDate.cpp" />
     <ClCompile Include="classFunctionImplement.cpp" />
     <ClCompile Include="main.cpp" />

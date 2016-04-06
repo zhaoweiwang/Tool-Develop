@@ -9,6 +9,8 @@
 
 int main(int argc, char* argv[]){
 
+	calVSN();
+
 	printLogo();				//打印logo；
 
 	checkDate(2016,3,31);	    //检查软件是否过期；

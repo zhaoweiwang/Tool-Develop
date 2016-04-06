@@ -51,6 +51,9 @@
     <ClCompile Include="readModification.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="calVSN.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Head.h">

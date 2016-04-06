@@ -250,5 +250,13 @@ void outputResult();
 */
 void readModification();
 
+/*
+函数名：	calVSN
+功能：	调用R包中的VSN
+输入：	无
+返回：	无
+*/
+void calVSN();
+
 
 #endif
