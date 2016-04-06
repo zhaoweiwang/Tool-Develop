@@ -179,6 +179,7 @@ void calcuPIF(){
 	readPf1idx();
 	//calcuPf1Pos();
 	readPf1();
-	calcuResult();
+	//calcuResult();
+	cout << "calculation of PIF complete..." << endl;
 }
 

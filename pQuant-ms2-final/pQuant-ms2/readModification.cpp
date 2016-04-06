@@ -16,7 +16,7 @@ void readModification(){
 	input_modifi.open(para.modification_path, ios::binary);
 
 	if (!input_modifi.is_open()){
-		cout << "Failed to open " << para.input_spectra_path << " File." << endl;
+		cout << "Failed to open " << para.modification_path << " File." << endl;
 		exit(0);
 	}
 

@@ -54,7 +54,8 @@ typedef struct parainfo{
 	string binPath = ".\\";
 
 	int quantMethod = 0;						//0-3代表iTRAQ4、iTRAQ8、TMT6和TMT10，4代表pIDL方法
-	double detaFragment = 200.0;				//搜索窗口大小
+	string  FTMSType = "";						//窗口类型
+	double detaFragment = 0.0;				//搜索窗口大小
 	vector<double> reporterMZ;					//iTRAQ、TMT报告离子MZ
 	vector<pIDLplexInfo> pIDLplex;				//pIDL标记列表
 
@@ -122,7 +123,9 @@ typedef struct psminfo{
 	int precuNums = 0;
 	vector<peakInfo> precus;
 
-
+	vector<double> a1Ratio;			//a1+离子比值
+	vector<double> allRatio;			//b、y离子比值
+	vector<string> annotation;	//标记匹配到的离子类型
 	//TODO: 利用继承派生出各种定量方法类
 }psmInfo;
 

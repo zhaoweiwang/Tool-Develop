@@ -142,6 +142,7 @@ void InitializePara(){
 	para.modification_path = "D:\\pFind\\bin\\modification.ini";			//fasta数据库路径
 
 	para.quantMethod = 0;													//定量方法的选择，default = 0, iTRAQ-4plex
+	para.FTMSType = "ppm";													//默认窗口类型为ppm
 	para.detaFragment = 200.0;												//Reporter Ion的窗口大小
 	para.reporterMZ = { 114.111, 115.111, 116.111, 117.111 };				//存放reporter Ion对应的的MZ，默认是iTRAQ4
 
@@ -193,9 +194,10 @@ void displayPara(){
 	cout << "[" << paraCount++ << "]" << ":  " << "modificationDatapath" << " = " << para.modification_path << endl;
 	cout << "[" << paraCount++ << "]" << ":  " << "quantResultDatapath" << " = " << para.output_ratio_path << endl;
 	cout << "[" << paraCount++ << "]" << ":  " << "quantitativeMethod" << " = " << para.quantMethod << endl;
+	cout << "[" << paraCount++ << "]" << ":  " << "FTMSType" << " = " << para.FTMSType << endl;
 	cout << "[" << paraCount++ << "]" << ":  " << "FTMS" << " = " << para.detaFragment << endl;
 	cout << "[" << paraCount++ << "]" << ":  " << "PIF" << " = " << para.PIF << endl;
-	cout << "[" << paraCount++ << "]" << ":  " << "PsmFDR" << " = " << para.PsmFDR << endl;
+	cout << "[" << paraCount++ << "]" << ": " << "PsmFDR" << " = " << para.PsmFDR << endl;
 	cout << "[" << paraCount++ << "]" << ": " << "ProteinFDR" << " = " << para.ProteinFDR << endl;
 	cout << "[" << paraCount++ << "]" << ": " << "Correct" << " = " << para.correct << endl;
 
@@ -271,6 +273,8 @@ void readPara(char* argv[]){								//打开m_cmdInfo[1] .para文件读参数值
 	para.output_ratio_path = param["quantResultDatapath"];
 
 	para.quantMethod = atoi(param["quantitativeMethod"].c_str());
+	para.FTMSType = param["FTMSType"];
+
 	para.detaFragment = atof(param["FTMS"].c_str());
 	para.PIF = atof(param["PIF"].c_str());
 	para.PsmFDR = atof(param["PsmFDR"].c_str());

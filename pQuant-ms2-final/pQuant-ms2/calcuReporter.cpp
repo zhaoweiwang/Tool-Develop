@@ -112,48 +112,67 @@ void calMedianStd(){						//需要去除非数PSMs结果
 
 void calcuReporter(){
 	cout << "\nStep5: Calculating reporter-ion`s intensity Ratio." << endl << endl;
-	for (int i = 0; i < psmVec.size(); i++){
-		for (int j = 1; j < psmVec[0].reporter.size(); j++){
-			if (-1.0 == psmVec[i].reporter[0]){
-				psmVec[i].ratioReporter.push_back(1024);				//114不存在的情况下，赋NAN无穷大给三个比值
-				continue;
+
+	if (para.quantMethod != 4){
+		for (int i = 0; i < psmVec.size(); i++){
+			for (int j = 1; j < psmVec[0].reporter.size(); j++){
+				if (-1.0 == psmVec[i].reporter[0]){
+					psmVec[i].ratioReporter.push_back(1024);				//114不存在的情况下，赋NAN无穷大给三个比值
+					continue;
+				}
+				if (-1.0 != psmVec[i].reporter[j])
+					psmVec[i].ratioReporter.push_back(log(psmVec[i].reporter[j] / psmVec[i].reporter[0]));
+				else
+					psmVec[i].ratioReporter.push_back(1024);
 			}
-			if (-1.0 != psmVec[i].reporter[j])
-				psmVec[i].ratioReporter.push_back(log(psmVec[i].reporter[j] / psmVec[i].reporter[0]));
-			else
-				psmVec[i].ratioReporter.push_back(1024);
-		}
 
-		//计算Correct Reporter的Ratio
-		for (int j = 1; j < psmVec[0].reporterCorrect.size(); j++){
-			if (-1.0 == psmVec[i].reporterCorrect[0]){
-				psmVec[i].ratioReporterCorrect.push_back(1024);				//114不存在的情况下，赋NAN无穷大给三个比值
-				continue;
+			//计算Correct Reporter的Ratio
+			for (int j = 1; j < psmVec[0].reporterCorrect.size(); j++){
+				if (-1.0 == psmVec[i].reporterCorrect[0]){
+					psmVec[i].ratioReporterCorrect.push_back(1024);				//114不存在的情况下，赋NAN无穷大给三个比值
+					continue;
+				}
+				if (-1.0 != psmVec[i].reporterCorrect[j])
+					psmVec[i].ratioReporterCorrect.push_back(log(psmVec[i].reporterCorrect[j] / psmVec[i].reporterCorrect[0]));
+				else
+					psmVec[i].ratioReporterCorrect.push_back(1024);
 			}
-			if (-1.0 != psmVec[i].reporterCorrect[j])
-				psmVec[i].ratioReporterCorrect.push_back(log(psmVec[i].reporterCorrect[j] / psmVec[i].reporterCorrect[0]));
-			else
-				psmVec[i].ratioReporterCorrect.push_back(1024);
+
+			////输出测试
+			//cout << "title: " << psmVec[i].title << endl;
+			//cout << "reporter: ";
+			//for (int l = 0; l < psmVec[i].reporter.size(); l++)
+			//	cout << psmVec[i].reporter[l] << " ";
+			//cout << "  reporterCorrect: ";
+			//for (int l = 0; l < psmVec[i].reporterCorrect.size(); l++)
+			//	cout << psmVec[i].reporterCorrect[l] << " ";
+			//cout << endl;
+			//cout << "Ratio: ";
+			//for (int k = 0; k < psmVec[i].ratioReporter.size(); k++)
+			//	cout << psmVec[i].ratioReporter[k] << " ";
+			//cout << "  RatioCorrect: ";
+			//for (int k = 0; k < psmVec[i].ratioReporterCorrect.size(); k++)
+			//	cout << psmVec[i].ratioReporterCorrect[k] << " ";
+			//cout << endl;
+
+			//getchar();
 		}
-
-		////输出测试
-		//cout << "title: " << psmVec[i].title << endl;
-		//cout << "reporter: ";
-		//for (int l = 0; l < psmVec[i].reporter.size(); l++)
-		//	cout << psmVec[i].reporter[l] << " ";
-		//cout << "  reporterCorrect: ";
-		//for (int l = 0; l < psmVec[i].reporterCorrect.size(); l++)
-		//	cout << psmVec[i].reporterCorrect[l] << " ";
-		//cout << endl;
-		//cout << "Ratio: ";
-		//for (int k = 0; k < psmVec[i].ratioReporter.size(); k++)
-		//	cout << psmVec[i].ratioReporter[k] << " ";
-		//cout << "  RatioCorrect: ";
-		//for (int k = 0; k < psmVec[i].ratioReporterCorrect.size(); k++)
-		//	cout << psmVec[i].ratioReporterCorrect[k] << " ";
-		//cout << endl;
-
-		//getchar();
+	}
+	else{
+		for (int i = 0; i < psmVec.size(); ++i){
+			for (int j = 0; j < psmVec[i].a1Ratio.size(); ++j){
+				if (psmVec[i].a1Ratio[j] != 0.0)
+					psmVec[i].a1Ratio[j] = log(psmVec[i].a1Ratio[j]);
+				else
+					psmVec[i].a1Ratio[j] = NAN;
+				
+				if (psmVec[i].allRatio[j] != 0.0)
+					psmVec[i].allRatio[j] = log(psmVec[i].allRatio[j]);
+				else
+					psmVec[i].allRatio[j] = NAN;
+				
+			}
+		}
 	}
 
 	//计算median

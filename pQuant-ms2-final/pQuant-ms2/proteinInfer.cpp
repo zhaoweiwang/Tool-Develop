@@ -36,9 +36,9 @@ void readFasta(){
 	inputFasta.open(para.fasta_path, ios::binary);
 	if (!inputFasta.is_open()){
 		cout << "Failed to open " << para.fasta_path << " File." << endl;
-	}else{
+	}/*else{
 		cout << para.fasta_path << " File open successfully." << endl;
-	}
+		}*/
 
 	string tempDe = "";
 	while (!inputFasta.eof()){
@@ -206,11 +206,9 @@ void proteinRela(){
 	inputProtein.open(para.input_protein_path, ios::binary);
 	if (!inputProtein.is_open()){
 		cout << "Failed to open " << para.input_protein_path << " File." << endl;
-	}
-	else
-	{
+	}/*else{
 		cout << para.input_protein_path << " File open successfully." << endl;
-	}
+	}*/
 
 	unordered_map<string, Rela> tempRela;
 	string tempStr = "";
@@ -350,6 +348,6 @@ void proteinInfer(){
 	readFasta();	
 	proteinMap();	//¿¨PIF
 	calUniqueNum();
-	calcuPro();		//«@È¡ProteinVec
-	//proteinRela();
+	calcuPro();		//»ñÈ¡ProteinVec
+	proteinRela();
 }
