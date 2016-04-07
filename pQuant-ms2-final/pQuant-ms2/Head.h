@@ -7,6 +7,7 @@
 #ifndef IHEAD_H
 #define IHEAD_H
 
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -20,17 +21,22 @@
 #include <map>
 #include <set>
 #include <algorithm>
+
 #include <windows.h>
+
 #include <iomanip>
 #include <WinNT.h>
 #include <tchar.h>
 #include <float.h>
+#include "sisocks.h"
+#include "Rconnection.h"
 // Attention:
 // If you use visual studio cl.exe compiler, use this header file
 #include "dirent.h"
 // else if you use gcc compiler, use this header file
 //#include <dirent.h>
 #include "stringProcess.h"
+
 
 using namespace std;
 
@@ -53,28 +59,28 @@ typedef struct pIDLplexinfo{
 typedef struct parainfo{
 	string binPath = ".\\";
 
-	int quantMethod = 0;						//0-3代表iTRAQ4、iTRAQ8、TMT6和TMT10，4代表pIDL方法
-	string  FTMSType = "";						//窗口类型
-	double detaFragment = 0.0;				//搜索窗口大小
-	vector<double> reporterMZ;					//iTRAQ、TMT报告离子MZ
-	vector<pIDLplexInfo> pIDLplex;				//pIDL标记列表
+	int quantMethod = 0;											//0-3代表iTRAQ4、iTRAQ8、TMT6和TMT10，4代表pIDL方法
+	string  FTMSType = "";											//窗口类型
+	double detaFragment = 0.0;								//搜索窗口大小
+	vector<double> reporterMZ;							//iTRAQ、TMT报告离子MZ
+	vector<pIDLplexInfo> pIDLplex;						//pIDL标记列表
 
-	string input_spectra_path = "";				//pFind.spectra结果文件，作为输入文件
+	string input_spectra_path = "";							//pFind.spectra结果文件，作为输入文件
 	string input_protein_path = "";
-	string pf_path = "";						//pf2文件路径
-	string pfidx_path = "";						//pf2idx文件路径
-	string pf1_path = "";						//pf1文件路径
-	string pf1idx_path = "";					//pf1idx文件路径
-	string output_ratio_path = "";				//定量比值输出路径
+	string pf_path = "";												//pf2文件路径
+	string pfidx_path = "";											//pf2idx文件路径
+	string pf1_path = "";												//pf1文件路径
+	string pf1idx_path = "";											//pf1idx文件路径
+	string output_ratio_path = "";								//定量比值输出路径
 
-	string fasta_path = "";						//fasta文件路径
-	string modification_path = "";				//modification.ini文件路径
+	string fasta_path = "";											//fasta文件路径
+	string modification_path = "";								//modification.ini文件路径
 
-	double PIF = 0.75;							//PIF值
-	double PsmFDR = 0.01;						//PSM层次卡的FDR值
-	double ProteinFDR = 0.01;					//Protein层次卡的FDR值
+	double PIF = 0.75;													//PIF值
+	double PsmFDR = 0.01;										//PSM层次卡的FDR值
+	double ProteinFDR = 0.01;									//Protein层次卡的FDR值
 
-	bool correct = true;						//是否使用校正矩阵
+	bool correct = true;												//是否使用校正矩阵
 }paraInfo;
 
 //谱峰
@@ -123,9 +129,12 @@ typedef struct psminfo{
 	int precuNums = 0;
 	vector<peakInfo> precus;
 
+	vector<double> a1Iten;			//a1+离子强度
+	vector<double> allIten;			//b、y离子强度和
 	vector<double> a1Ratio;			//a1+离子比值
 	vector<double> allRatio;			//b、y离子比值
-	vector<string> annotation;	//标记匹配到的离子类型
+	vector<string> annotation;		//标记匹配到的离子类型
+
 	//TODO: 利用继承派生出各种定量方法类
 }psmInfo;
 

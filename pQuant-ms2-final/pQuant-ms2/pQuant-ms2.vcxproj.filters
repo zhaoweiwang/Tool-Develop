@@ -54,16 +54,31 @@
     <ClCompile Include="calVSN.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Rconnection.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dirent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Head.h">
-      <Filter>Resource Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stringProcess.h">
-      <Filter>Resource Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dirent.h">
-      <Filter>Resource Files</Filter>
+    <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rconnection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rsrv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sisocks.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

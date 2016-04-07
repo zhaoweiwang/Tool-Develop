@@ -258,7 +258,7 @@ void calpIDL(){
 			}
 		}
 
-		vector<double> all_mass;							//all_mass存用户设置的修饰质量对
+		vector<double> all_mass;								//all_mass存用户设置的修饰质量对
 		for (int j = 0; j < para.pIDLplex.size(); ++j){
 			all_mass.push_back(para.pIDLplex[j].massN);
 			all_mass.push_back(para.pIDLplex[j].massC);
@@ -320,9 +320,14 @@ void calpIDL(){
 			if (index0 != -1){
 				peaks[j].push_back(psmVec[i].peaks[index0]);
 				psmVec[i].annotation.push_back("a1+");
+
+				psmVec[i].a1Iten.push_back(psmVec[i].peaks[index0].iten);
 			}
-			else
+			else{
 				peaks[j].push_back(tmp);
+
+				psmVec[i].a1Iten.push_back(0.0);
+			}
 
 			//cout << a1 << ":" << psmVec[i].peaks[index0].iten << endl;
 
@@ -555,13 +560,13 @@ void correctIsotopeImpurities(){
 
 void readData(){
 
-	readPsms();							//Step1: 再将.spectra所有PSMload到内存中
+	readPsms();									//Step1: 再将.spectra所有PSMload到内存中
 
-	readPf2idx();							//Step2: 获取每个PSM的pf2pos
+	readPf2idx();								//Step2: 获取每个PSM的pf2pos
 
-	readPf2();								//Step3: 读取pf2获取所有谱峰信息
+	readPf2();										//Step3: 读取pf2获取所有谱峰信息
 
-	getReporter();						//Step4: 获取Reporter峰信息
+	getReporter();								//Step4: 获取Reporter峰信息
 
 	if (para.correct && (para.quantMethod == 0 || para.quantMethod == 1 || para.quantMethod == 2)){					
 		correctIsotopeImpurities();		//Step5: 矫正reporter ions强度

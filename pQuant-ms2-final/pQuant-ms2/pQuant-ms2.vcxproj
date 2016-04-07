@@ -114,7 +114,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -152,14 +152,19 @@
     <ClCompile Include="outputResult.cpp" />
     <ClCompile Include="printLogo.cpp" />
     <ClCompile Include="proteinInfer.cpp" />
+    <ClCompile Include="Rconnection.cc" />
     <ClCompile Include="readCmdline.cpp" />
     <ClCompile Include="readData.cpp" />
     <ClCompile Include="readModification.cpp" />
     <ClCompile Include="stringProcess.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="config.h" />
     <ClInclude Include="dirent.h" />
     <ClInclude Include="Head.h" />
+    <ClInclude Include="Rconnection.h" />
+    <ClInclude Include="Rsrv.h" />
+    <ClInclude Include="sisocks.h" />
     <ClInclude Include="stringProcess.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
