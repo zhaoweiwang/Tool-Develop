@@ -192,13 +192,22 @@ const string TIMESTRING = "2016-02-18 16:00";
 输入：	无
 返回：	无
 */
+/*
+根据pFind Studio系列软件的传统，打印pQuant-MS2.exe的名称、版本号和pFind官网地址等信息
+该模块不需要经常改动，仅在软件升级、改名等时候需要重新设置打印的LOGO
+*/
 void printLogo();
+
 
 /*
 函数名：	checkDate
 功能：	检查软件是否过期；
 输入：	无
 返回：	无
+*/
+/*
+pFind Studio系列软件并非免费、开源，pIsobariQ.exe同样也有使用期限
+该模块一个月需要更新一次，即提供用户使用的期限为1个月，这是pFind系列软件的正常使用期限
 */
 void checkDate(int year, int month, int day);
 
@@ -207,6 +216,12 @@ void checkDate(int year, int month, int day);
 功能：	读取cmd命令行；
 输入：	年月日
 返回：	无
+*/
+/*
+该函数主要用于获取用户传递的参数，主要有3中情况
+第1种：参数只有1个，即对应用户双击了pIsobariQ.exe
+第2种：参数2个，进行检查，运行参数文件调用模式
+第3种：参数2个以上，进行检查并从命令行运行，目前该模式待定义（pIsobariQ参数较多，改模式的存在不合理，可以废除掉）
 */
 void readCmdline(const int argc, char* argv[]);
 

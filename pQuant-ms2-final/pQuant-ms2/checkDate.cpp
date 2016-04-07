@@ -1,5 +1,8 @@
 ﻿#include "Head.h"
 
+//pFind Studio系列软件并非免费、开源，pIsobariQ.exe同样也有使用期限
+//该模块一个月需要更新一次，即提供用户使用的期限为1个月，这是pFind系列软件的正常使用期限
+
 void checkDate(int year, int month, int day){
 
 	tm exptm;

@@ -126,34 +126,39 @@ void DisplayCMDUsage(){
 }
 
 void InitializePara(){
+	
+	//简单的初始化pQuant-MS2.para参数文件的参数项，当用户双击pQuant-MS2.exe文件时
+	//将在当前目录下生成初始化的pQuant-MS2.para文件，供用户设置和指导设置使用
+
 	para.binPath = ".\\";
 
-	para.input_spectra_path = "D:\\pFindWorkspace\\pFind.spectra";			//pFind工作目录下的pFind.spectra路径
-	para.input_protein_path = "D:\\pFindWorkspace\\pFind.protein";			//pFind工作目录下的pFind.protein路径
+	para.input_spectra_path = "D:\\pFindWorkspace\\pFind.spectra";					//pFind工作目录下的pFind.spectra路径
+	para.input_protein_path = "D:\\pFindWorkspace\\pFind.protein";					//pFind工作目录下的pFind.protein路径
 
-	para.pfidx_path = "D:\\DataSet\\";										//数据存放目录下pParse导出的pf2idx路径
-	para.pf_path = "D:\\DataSet\\";											//数据存放目录下pParse导出的pf2路径
-	para.pf1idx_path = "D:\\DataSet\\";										//数据存放目录下pParse导出的pf1idx路径
-	para.pf1_path = "D:\\DataSet\\";										//数据存放目录下pParse导出的pf1路径
+	para.pfidx_path = "D:\\DataSet\\";																		//数据存放目录下pParse导出的pf2idx路径
+	para.pf_path = "D:\\DataSet\\";																			//数据存放目录下pParse导出的pf2路径
+	para.pf1idx_path = "D:\\DataSet\\";																	//数据存放目录下pParse导出的pf1idx路径
+	para.pf1_path = "D:\\DataSet\\";																			//数据存放目录下pParse导出的pf1路径
 
-	para.output_ratio_path = "D:\\DataSet\\";								//计算结果的导出路径
+	para.output_ratio_path = "D:\\DataSet\\";															//计算结果的导出路径
 
-	para.fasta_path = "D:\\DataSet\\";										//fasta数据库路径
-	para.modification_path = "D:\\pFind\\bin\\modification.ini";			//fasta数据库路径
+	para.fasta_path = "D:\\DataSet\\";																		//fasta数据库路径
+	para.modification_path = "D:\\pFind\\bin\\modification.ini";							//fasta数据库路径
 
-	para.quantMethod = 0;													//定量方法的选择，default = 0, iTRAQ-4plex
-	para.FTMSType = "ppm";													//默认窗口类型为ppm
-	para.detaFragment = 200.0;												//Reporter Ion的窗口大小
-	para.reporterMZ = { 114.111, 115.111, 116.111, 117.111 };				//存放reporter Ion对应的的MZ，默认是iTRAQ4
+	para.quantMethod = 0;																							//定量方法的选择，default = 0, iTRAQ-4plex
+	para.FTMSType = "ppm";																						//默认窗口类型为ppm
+	para.detaFragment = 200.0;																				//Reporter Ion的窗口大小
+	para.reporterMZ = { 114.111, 115.111, 116.111, 117.111 };							//存放reporter Ion对应的的MZ，默认是iTRAQ4
 
-	para.PIF = 0.75;														//PIF，默认卡0.75
-	para.PsmFDR = 0.01;														//PSM层次的FDR，卡0.01
-	para.ProteinFDR = 0.01;													//Protein层次的FDR，卡0.01
+	para.PIF = 0.75;																										//PIF，默认卡0.75
+	para.PsmFDR = 0.01;																							//PSM层次的FDR，卡0.01
+	para.ProteinFDR = 0.01;																						//Protein层次的FDR，卡0.01
 
-	para.correct = true;													//强度校正矩阵，默认为true
+	para.correct = true;																								//强度校正矩阵开关，默认为true
+
 }
 
-void setBinPath(char* argv[]){								// The path of pParse.exe. Extract the path from argv[0]
+void setBinPath(char* argv[]){																				// The path of pIsobariQ.exe. Extract the path from argv[0]
 	string binPath = argv[0];
 	int found = binPath.find_last_of("/\\");
 	if (found != string::npos)	
@@ -190,57 +195,58 @@ void displayPara(){
 	cout << "\n\t       --------- BEGIN PARAMETERS ---------" << endl << endl;
 	cout << "[" << paraCount++ << "]" << ":  " << "resultDatapath" << " = " << para.input_spectra_path << endl;
 	cout << "[" << paraCount++ << "]" << ":  " << "pfDatapath" << " = " << para.pf_path << endl;
+	cout << "[" << paraCount++ << "]" << ":  " << "quantResultDatapath" << " = " << para.output_ratio_path << endl;
+
 	cout << "[" << paraCount++ << "]" << ":  " << "fastaDatapath" << " = " << para.fasta_path << endl;
 	cout << "[" << paraCount++ << "]" << ":  " << "modificationDatapath" << " = " << para.modification_path << endl;
-	cout << "[" << paraCount++ << "]" << ":  " << "quantResultDatapath" << " = " << para.output_ratio_path << endl;
+
 	cout << "[" << paraCount++ << "]" << ":  " << "quantitativeMethod" << " = " << para.quantMethod << endl;
+	if (para.quantMethod == 4){
+		cout << "[" << paraCount++ << "]" << ":  " << "pIDLplex" << " =";
+		for (int i = 0; i < para.pIDLplex.size(); ++i){
+			cout << " " << para.pIDLplex[i].modN << " " << para.pIDLplex[i].massN << ", "
+				<< para.pIDLplex[i].modC << " " << para.pIDLplex[i].massC << ";";
+		}
+		cout << endl;
+	}
+	else{
+		cout << "[" << paraCount++ << "]" << ":  " << "reporterIonMZ" << " =";
+		for (int i = 0; i < para.reporterMZ.size(); ++i)
+			cout << " " << para.reporterMZ[i];
+		cout << endl;
+	}
+
 	cout << "[" << paraCount++ << "]" << ":  " << "FTMSType" << " = " << para.FTMSType << endl;
 	cout << "[" << paraCount++ << "]" << ":  " << "FTMS" << " = " << para.detaFragment << endl;
-	cout << "[" << paraCount++ << "]" << ":  " << "PIF" << " = " << para.PIF << endl;
+	cout << "[" << paraCount++ << "]" << ": " << "PIF" << " = " << para.PIF << endl;
 	cout << "[" << paraCount++ << "]" << ": " << "PsmFDR" << " = " << para.PsmFDR << endl;
 	cout << "[" << paraCount++ << "]" << ": " << "ProteinFDR" << " = " << para.ProteinFDR << endl;
-	cout << "[" << paraCount++ << "]" << ": " << "Correct" << " = " << para.correct << endl;
-
-	cout << "[" << paraCount++ << "]" << ": " << "reporterIonMZ" << " =";
-	for (int i = 0; i < para.reporterMZ.size(); ++i) 
-		cout << " " << para.reporterMZ[i];
-	cout << endl;
-
-	cout << "[" << paraCount++ << "]" << ": " << "pIDLplex" << " =";
-	for (int i = 0; i < para.pIDLplex.size(); ++i){
-		cout << " " << para.pIDLplex[i].modN << " " << para.pIDLplex[i].massN << ", "
-			<< para.pIDLplex[i].modC << " " << para.pIDLplex[i].massC << ";";
-	}
-	cout << endl << endl;
+	cout << "[" << paraCount++ << "]" << ": " << "Correct" << " = " << para.correct << endl << endl;
 
 	cout << "\t       --------- END PARAMETERS -----------" << endl << endl;
+
 }
 
-//void checkPara(){											//读取参数后的判断步骤；
-//	if (isPath(para.input_spectra_path)){
-//		if (para.input_spectra_path[para.input_spectra_path.size() - 1] != '\\')
-//			para.input_spectra_path += "\\";
-//	}
-//	else{
-//		
-//	}
-//}
-
-void readPara(char* argv[]){								//打开m_cmdInfo[1] .para文件读参数值；
+/*
+解析pIsobariQ.para参数文件，并初始化para对象
+*/
+void readPara(char* argv[]){									//打开m_cmdInfo[1] .para文件读参数值；
 	
-	InitializePara();										//初始化配置文件参数；
+	InitializePara();														//初始化配置文件参数；
 
 	ifstream fin;
 	fin.open(argv[1], ios::in);
 	if (!fin.good()){
-		string inFo = "The File \"";
+		string inFo = "The file \"";
 		inFo += argv[1];
-		inFo += "\" dose not exist!";
+		inFo += "\" dose not exist.";
 		screenInfo pS;
-		pS.printInfoTo(cout, "Error", inFo);
-		throw inFo;
+		//pS.printInfoTo(cout, "Error", inFo);
+		//throw inFo;														//关闭掉抛异常，工程不大时不推荐抛异常
+		cout << "\t    " << inFo << endl;
+		exit(1);
 	}else{
-		cout << "The File " << argv[1] << " opened successfully." << endl;
+		cout << "\t    The file " << argv[1] << " opened successfully." << endl;
 	}
 
 	char strTemp[256];
@@ -259,30 +265,28 @@ void readPara(char* argv[]){								//打开m_cmdInfo[1] .para文件读参数值
 		forward = str.substr(0, pos-1);
 		backward = str.substr(pos + 2, str.size());
 		Trim(forward);
-		Trim(backward);
+		Trim(backward);												//哈希参数项-值
 
 		param[forward] = backward;
 	}
 
-	para.input_spectra_path = param["resultDatapath"];
-	para.input_protein_path = param["resultDatapath"].substr(0, param["resultDatapath"].find_last_of('.')) + ".protein";
+	//逐项赋值到para对象中
 
-	para.pf_path = param["pfDatapath"];
-	para.fasta_path = param["fastaDatapath"];
-	para.modification_path = param["modificationDatapath"];
-	para.output_ratio_path = param["quantResultDatapath"];
+	//[Basic Options]
+	para.input_spectra_path		= param["resultDatapath"];
+	para.pf_path							= param["pfDatapath"];
+	para.output_ratio_path			= param["quantResultDatapath"];
+	para.input_protein_path		= param["resultDatapath"].substr(0, param["resultDatapath"].find_last_of('.')) + ".protein";
 
-	para.quantMethod = atoi(param["quantitativeMethod"].c_str());
-	para.FTMSType = param["FTMSType"];
+	//[Database Options]
+	para.fasta_path						= param["fastaDatapath"];
+	para.modification_path			= param["modificationDatapath"];
 
-	para.detaFragment = atof(param["FTMS"].c_str());
-	para.PIF = atof(param["PIF"].c_str());
-	para.PsmFDR = atof(param["PsmFDR"].c_str());
-	para.ProteinFDR = atof(param["ProteinFDR"].c_str());
-	para.correct = atoi(param["Correct"].c_str());
+	//[Method Options]
+	para.quantMethod				= atoi(param["quantitativeMethod"].c_str());
 
-	vector<double> mZ;
-	while (param["reporterIonMZ"].find(',') != string::npos){		//动态提取reporterIonMZ内容
+	vector<double> mZ;		//动态提取reporterIonMZ内容
+	while (param["reporterIonMZ"].find(',') != string::npos){
 		string temp = "";
 		temp = param["reporterIonMZ"].substr(0, param["reporterIonMZ"].find(','));
 		mZ.push_back(atof(temp.c_str()));
@@ -291,14 +295,14 @@ void readPara(char* argv[]){								//打开m_cmdInfo[1] .para文件读参数值
 	mZ.push_back(atof(param["reporterIonMZ"].c_str()));
 	para.reporterMZ.swap(mZ);
 
-	pIDLplexInfo tempIDL;
+	pIDLplexInfo tempIDL;			//动态提取pIDLplex内容
 	while (param["pIDLplex"].find(';') != string::npos){
 		string temp = "";
 		temp = param["pIDLplex"].substr(0, param["pIDLplex"].find(';'));
 		tempIDL.modN = temp.substr(0, temp.find(' '));
 		tempIDL.massN = atof(temp.substr(temp.find(' '), temp.find(',') - temp.find(' ')).c_str());
-		tempIDL.modC = temp.substr(temp.find(',')+2, temp.find_last_of(' ') - temp.find(',')-2);
-		tempIDL.massC = atof(temp.substr(temp.find_last_of(' '), temp.size()- temp.find_last_of(' ')).c_str());
+		tempIDL.modC = temp.substr(temp.find(',') + 2, temp.find_last_of(' ') - temp.find(',') - 2);
+		tempIDL.massC = atof(temp.substr(temp.find_last_of(' '), temp.size() - temp.find_last_of(' ')).c_str());
 
 		para.pIDLplex.push_back(tempIDL);
 		param["pIDLplex"] = param["pIDLplex"].substr(param["pIDLplex"].find(';') + 2, param["pIDLplex"].size());
@@ -310,17 +314,27 @@ void readPara(char* argv[]){								//打开m_cmdInfo[1] .para文件读参数值
 	tempIDL.modC = temp.substr(temp.find(',') + 2, temp.find_last_of(' ') - temp.find(',') - 2);
 	tempIDL.massC = atof(temp.substr(temp.find_last_of(' '), temp.size() - temp.find_last_of(' ')).c_str());
 	para.pIDLplex.push_back(tempIDL);
-	
+
+	//[Advanced Options]
+	para.FTMSType						= param["FTMSType"];
+	para.detaFragment				= atof(param["FTMS"].c_str());
+	para.PIF									= atof(param["PIF"].c_str());
+	para.PsmFDR							= atof(param["PsmFDR"].c_str());
+	para.ProteinFDR					= atof(param["ProteinFDR"].c_str());
+	para.correct							= atoi(param["Correct"].c_str());
 
 	setBinPath(argv);
-	//checkPara();
 	displayPara();
 }
 
+/*
+该函数主要用于获取用户传递的参数，主要有3中情况
+第1种：参数只有1个，即对应用户双击了pIsobariQ.exe
+第2种：参数2个，进行检查，运行参数文件调用模式
+第3种：参数2个以上，进行检查并从命令行运行，目前该模式待定义（pIsobariQ参数较多，改模式的存在不合理，可以废除掉）
+*/
 
 void readCmdline(const int argc, char* argv[]){
-
-	int start = clock();		//计时器
 
 	for (int arg_i = 0; arg_i < argc; arg_i++){
 		m_cmdInfo.push_back(argv[arg_i]);
@@ -329,16 +343,20 @@ void readCmdline(const int argc, char* argv[]){
 	m_cmdInfo.push_back("\n");
 
 	if (1 == argc){
+
 		printHelpInfo();
 		//DisplayCMDUsage();
-	}else if (argc == 2 && (stringProcess::bMatchingFix(argv[1], ".cfg", true, true) || stringProcess::bMatchingFix(argv[1], ".para", true, true))){
+
+	}else if (argc == 2 && (stringProcess::bMatchingFix(argv[1], ".cfg", true, true) || 
+				stringProcess::bMatchingFix(argv[1], ".para", true, true))){
+
 		readPara(argv);
+
 	}else{
+
 		//readCmd();
 		cout << "Todo: 准备加入从命令行读取参数的运行方式" << endl;
-		getchar();
-	}
+		//"Todo: 准备加入从命令行读取参数的运行方式"
 
-	int seconds = (clock() - start) / CLOCKS_PER_SEC;
-	cout << "\t    == == == Time elapsed: " << seconds << " seconds. == == ==" << endl;
+	}
 }
