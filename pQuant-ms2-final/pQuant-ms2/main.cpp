@@ -12,6 +12,8 @@
 
 #include "Head.h"
 
+int countStep = 1;								//步骤计数器
+
 /*
 二级定量软件pQuant-MS2的主程序，通过该入口，调用各个功能模块进行计算
 主要支持iTRAQ、TMT和pIDL等二级定量方法，同时也支持输出PSM、Protein层次的定量结果
@@ -27,11 +29,13 @@ int main(int argc, char* argv[]){
 	该模块不需要经常改动，仅在软件升级、改名等时候需要重新设置打印的LOGO
 	*/
 
+
 	checkDate(2016,3,31);						//检查软件是否过期
 	/*
 	pFind Studio系列软件并非免费、开源，pIsobariQ.exe同样也有使用期限
 	该模块一个月需要更新一次，即提供用户使用的期限为1个月，这是pFind系列软件的正常使用期限
 	*/
+
 
 	readCmdline(argc, argv);					//通过读取 [命令行] 或 [参数文件] 获取软件参数设置
 	/*
@@ -42,17 +46,32 @@ int main(int argc, char* argv[]){
 	*/
 
 
-	readData();									//获取標記離子的信息；
+	readData();											//获取標記離子的信息
+	/*
+	该模块主要支持pFind 3的搜索结果，通过读取pFind.spectra文件获取PSMs
+	通过读取pParse.exe导出的pf2idx、pf2文件提取谱峰
+	然后根据具体的定量方法提取谱峰，赋给对应的PSM
+	如果pIsobariQ.exe需要扩展支持其它引擎的定量结果，仅需在此处或下一级中（建议）扩展对应引擎分支即可，该分支属于pFind 3
+	*/
 
-	calVSN();										//调用R中的VSN进行强度处理
+
+	calVSN();											//调用R中的VSN进行强度处理
+	/*
+	
+	*/
+
 
 	calcuReporter();							//计算比值、中位数和标准差；
 
+
 	calcuPIF();									//计算PIF；
+
 
 	proteinInfer();								//蛋白归并；
 
+
 	outputResult();							//输出PSM层级的结果；
+
 
 	int seconds = (clock() - start) / CLOCKS_PER_SEC;
 	cout << "\t    == == == Time elapsed: " << seconds << " seconds. == == ==" << endl;

@@ -1,5 +1,6 @@
 #include "Head.h"
 
+extern int countStep;
 extern parainfo para;
 extern vector<psmInfo> psmVec;					//PSM缓冲区
 
@@ -111,7 +112,7 @@ void calMedianStd(){						//需要去除非数PSMs结果
 }
 
 void calcuReporter(){
-	cout << "\nStep5: Calculating reporter-ion`s intensity Ratio." << endl << endl;
+	cout << "\n[Step" << countStep++ << "]" " Calculating reporter-ion`s intensity Ratio" << endl << endl;
 
 	if (para.quantMethod != 4){
 		for (int i = 0; i < psmVec.size(); i++){
@@ -160,18 +161,22 @@ void calcuReporter(){
 	}
 	else{
 		for (int i = 0; i < psmVec.size(); ++i){
+			//cout << psmVec[i].title << endl;
 			for (int j = 0; j < psmVec[i].a1Ratio.size(); ++j){
-				if (psmVec[i].a1Ratio[j] != 0.0)
-					psmVec[i].a1Ratio[j] = log(psmVec[i].a1Ratio[j]);
+				if (psmVec[i].a1Ratio[j] != 0.0){
+					//cout << psmVec[i].a1Ratio[j] << " " << log2(psmVec[i].a1Ratio[j] )<< endl;
+					psmVec[i].a1Ratio[j] = log2(psmVec[i].a1Ratio[j]);
+				}
 				else
 					psmVec[i].a1Ratio[j] = NAN;
 				
 				if (psmVec[i].allRatio[j] != 0.0)
-					psmVec[i].allRatio[j] = log(psmVec[i].allRatio[j]);
+					psmVec[i].allRatio[j] = log2(psmVec[i].allRatio[j]);
 				else
 					psmVec[i].allRatio[j] = NAN;
 				
 			}
+			//getchar();
 		}
 	}
 

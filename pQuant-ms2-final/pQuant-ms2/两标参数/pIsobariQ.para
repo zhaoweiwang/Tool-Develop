@@ -3,13 +3,13 @@
 # Time: 2015.10.27
 
 [Basic Options]
-resultDatapath = D:\Issues\Dataset\20160328_zhouyuan_IPL_quant\Hela_4p_1111\LiuJianHui\20160415\result\pFind.spectra
-pfDatapath = D:\Issues\Dataset\20160328_zhouyuan_IPL_quant\Hela_4p_1111\LiuJianHui\
+resultDatapath = D:\Issues\Dataset\20160328_zhouyuan_IPL_quant\PP1_1-01\34L_result\result\pFind.spectra
+pfDatapath = D:\Issues\Dataset\20160328_zhouyuan_IPL_quant\PP1_1-01\
 # you need to add the path of pf files which output by pParse.
-quantResultDatapath = D:\Issues\Dataset\20160328_zhouyuan_IPL_quant\Hela_4p_1111\LiuJianHui\20160415\result\pQuant-ms2_result.spectra
+quantResultDatapath = D:\Issues\Dataset\20160328_zhouyuan_IPL_quant\PP1_1-01\34L_result\result\pQuant-ms2_result.spectra
 
 [Database Options]
-fastaDatapath = D:\Issues\Dataset\20160328_zhouyuan_IPL_quant\Hela_4p_1111\LiuJianHui\HUMAN-20150409_con.fasta
+fastaDatapath = D:\Issues\Dataset\20160328_zhouyuan_IPL_quant\HUMAN-20150409\HUMAN-20150409.fasta
 modificationDatapath = D:\Software\pFind3\pFindStudio\bin\modification.ini
 
 [Method Options]
@@ -28,12 +28,12 @@ pIDLplex = Dim32LN 32.050564, Dim32HK 32.056408; Dim32HN 32.056408, Dim32LK 32.0
 # e.g. pIDL-2: Dim34NL 34.063119, Dim34KL 34.063119; Dim34NH 34.068963, Dim34KH 34.068963;
 
 [Advanced Options]
-FTMSType = Da
+FTMSType = ppm
 # you could choose "Da" or "ppm" to define the width of tolerance window.
-FTMS = 0.002
+FTMS = 200
 # a fragment mass tolerance was set by yourself, which default is 20 ppm.
 minRange = 0
-maxRange = 200
+maxRange = 10000
 # this option is provided for pIDL-Quantification to extract the range peaks.
 PIF = 0.75
 # a option to filter the PSMS and Protein for the interference of co-elution precursor ions.

@@ -17,82 +17,66 @@ using Clearcore2.StructuredStorage;
 using Clearcore2.Utility;
 using Clearcore2.ProjectUtilities.Options;
 
-namespace wiff
-{
-
-    class Program
-    {
-        public static void Parse(Spectrum spec, WiffFile wifffile,int cycleCount, int experimentCount, string ms1file,string ms2file,string mgffile,Param para)
-        {
+namespace wiff{
+    class Program{
+        public static void Parse(Spectrum spec, WiffFile wifffile, int cycleCount,
+                                 int experimentCount, string ms1file, string ms2file,
+                                 string mgffile, Param para){
             StreamWriter writerms1 = null; 
             StreamWriter writerms2 = null; 
             StreamWriter writermgf = null;
 
-            //TODO: 输出Locus2Scan的哈希表
+            // 输出Locus2Scan的哈希表
             StreamWriter writerLocus2Scan = null;
             string locus2scanName = ms1file.Substring(0, ms1file.LastIndexOf('.')) + ".Locus2Scan";
             writerLocus2Scan = new StreamWriter(new FileStream(locus2scanName, FileMode.Create, FileAccess.Write));
 
+            // 输出 .xtract FLAG 文件
             string flagMsFileName = ms1file.Substring(0, ms1file.LastIndexOf('.')) + ".xtract";
 
-            if (para.ms1 == 1)
-            {
+            if (para.ms1 == 1){
                 writerms1 = new StreamWriter(new FileStream(ms1file, FileMode.Create, FileAccess.Write));
-                spec.WriteHeader(writerms1,para);
-
+                spec.WriteHeader(writerms1,para);               // 写表头
             }
-            if (para.ms2 == 1)
-            {
+
+            if (para.ms2 == 1){
                 writerms2 = new StreamWriter(new FileStream(ms2file, FileMode.Create, FileAccess.Write));
-                spec.WriteHeader(writerms2, para);
+                spec.WriteHeader(writerms2, para);              // 写表头
             }
 
-            if (para.mgf == 1)
-            {
+            if (para.mgf == 1){
                 writermgf = new StreamWriter(new FileStream(mgffile, FileMode.Create, FileAccess.Write));
             }
 
-            for (int j = 0; j < cycleCount; j++)
-            {
+            for (int j = 0; j < cycleCount; j++){
                 string header = "[wiff] <Output files>: ";
                 Console.Write("\r" + header + String.Format("{0:F3}", (double)(j + 1) / (double)cycleCount * 100) + "%");
-
-                for (int i = 0; i < experimentCount; i++)
-                {
+                for (int i = 0; i < experimentCount; i++){
                     TotalIonChromatogram totalIonChromatogram = spec.array[i];
                     float num = (float)totalIonChromatogram.GetYValue(j);
-                    if (i == 0 || num > 0f)
-                    {
+                    if (i == 0 || num > 0f){
                         bool doCentroid = false;
                         spec.cycle = j + 1;
                         spec.experiment = i + 1;
                         spec.m_msExperiment = spec.wiffExperiments[i];
                         //spec.m_spectrum = spec.m_msExperiment.GetMassSpectrum(j);
-                        try
-                        {
+                        try{            // AB 数据可能因为质量不好的原因，造成 Get 不到谱图号
                             spec.m_spectrum = spec.m_msExperiment.GetMassSpectrum(j);
-                        }
-                        catch (System.Exception e)
-                        {
+                        }catch (System.Exception e){
                             continue;
                         }
                         spec.details = spec.m_msExperiment.Details;
                         spec.m_spectrumInfo = spec.m_msExperiment.GetMassSpectrumInfo(j);
                         spec.pointsAreContinuous = !spec.m_spectrumInfo.CentroidMode;
 
-                        if (spec.GetDataSize(doCentroid) > 0)
-                        {
-
+                        if (spec.GetDataSize(doCentroid) > 0){
                             List<double> centermzs = new List<double>();
                             List<double> centerint = new List<double>();
                             spec.GetData(doCentroid, out centermzs, out centerint);
 
-                            if (para.cent == true)
-                            {
-                                PeakDetection.WindowCentroid(centermzs, centerint, out spec.mz, out spec.intensity,spec);
-                            }
-                            else
-                            {
+                            if (para.cent == true){
+                                PeakDetection.WindowCentroid(centermzs, centerint, out spec.mz, out spec.intensity, spec);
+                            }else{
                                 spec.mz = centermzs;
                                 spec.intensity = centerint;
                             }
@@ -100,28 +84,25 @@ namespace wiff
                             spec.retentionTime = (double)totalIonChromatogram.GetXValue(j);
                             spec.precursor_mz = 0.0;
                             spec.charge = 0;
-                            if (spec.m_spectrumInfo.IsProductSpectrum)
-                            {
+                            if (spec.m_spectrumInfo.IsProductSpectrum){
                                 spec.precursor_mz = spec.m_spectrumInfo.ParentMZ;
                                 spec.charge = spec.m_spectrumInfo.ParentChargeState;
                             }
                             spec.scan++;
                             //scan从1开始
-                            if (spec.GetMSLevel() == 1 && para.ms1 == 1)
-                            {
+                            if (spec.GetMSLevel() == 1 && para.ms1 == 1){
                                 spec.WriteMS1(writerms1);
 
                             }else if(spec.GetMSLevel() > 1){
-                                if (para.ms2 == 1)
-                                {
+                                if (para.ms2 == 1){
                                     spec.WriteMS2(writerms2);
                                 }
-                                if (para.mgf == 1)
-                                {
+
+                                if (para.mgf == 1){
                                     spec.WriteMGF(wifffile,writermgf);
                                 }
 
-                                //TODO: 输出locus2scan哈希表
+                                // 输出 locus2scan 哈希表
                                 string wifftitle = "Locus:" + "1.1.1." + spec.cycle + "." + spec.experiment;
                                 //Console.WriteLine("WiffTitle:"+wifftitle);
                                 //Console.WriteLine("Scan:"+spec.scan);
@@ -132,37 +113,33 @@ namespace wiff
                     }
                 }
             }
-            if (para.ms1 == 1)
-            {
+
+
+            if (para.ms1 == 1){
                 writerms1.Close();
             }
-            if (para.ms2 == 1)
-            {
+
+            if (para.ms2 == 1){
                 writerms2.Close();
             }
-            if (para.mgf == 1)
-            {
+
+            if (para.mgf == 1){
                 writermgf.Close();
             }
+
             //写出.Xtract文件作为导出flag.
             FileStream flagMsFile = new FileStream(flagMsFileName, FileMode.Create, FileAccess.Write);
             flagMsFile.Close();
-
             writerLocus2Scan.Close();
-
             Console.WriteLine();
         }
 
-        public static void extract(string wiffpath, Param para)
-        {
+        public static void extract(string wiffpath, Param para){
             WiffFile wifffile = WiffFile.Create(wiffpath);
             int pos = wiffpath.LastIndexOf(".");
-            if (para.outputPath == "")
-            {
+            if (para.outputPath == ""){
                 para.outputPath = wiffpath.Substring(0, pos);
-            }
-            else
-            {
+            }else{
                 para.outputPath = para.outputPath + "\\" + wifffile.name;
             }
 
@@ -173,22 +150,20 @@ namespace wiff
             string ms1file = para.outputPath + ".ms1";
             string ms2file = para.outputPath + ".ms2";
 
-            for (int sample = 1; sample <= wifffile.m_batch.GetSampleNames().Length; ++sample)
-            {
+            for (int sample = 1; sample <= wifffile.m_batch.GetSampleNames().Length; ++sample){
                 wifffile.GetSample(sample);
                 //Experiment数目
                 int experimentCount = wifffile.m_sample.MassSpectrometerSample.ExperimentCount;
                 spec.array = new TotalIonChromatogram[experimentCount];
                 spec.scan = 0;
-                for (int i = 0; i < experimentCount; i++)
-                {
+                for (int i = 0; i < experimentCount; i++){
                     spec.m_msExperiment = wifffile.m_sample.MassSpectrometerSample.GetMSExperiment(i);
                     spec.wiffExperiments.Add(spec.m_msExperiment);
                     spec.array[i] = spec.m_msExperiment.GetTotalIonChromatogram();
                 }
                 int numDataPoints = spec.array[0].NumDataPoints;
                 //Cycle数目
-                Parse(spec,wifffile,numDataPoints,experimentCount,ms1file,ms2file,mgffile,para);
+                Parse(spec, wifffile, numDataPoints, experimentCount, ms1file, ms2file, mgffile, para);
 
             }
             Console.WriteLine("[wiff] Output Files Completed!");
@@ -197,33 +172,26 @@ namespace wiff
 
 
         [STAThread]
-        static void Main(string[] args)
-        {
+        static void Main(string[] args){
             Application.EnableVisualStyles();
             //此方法为应用程序启用可视样式，如果控件和操作系统支持视觉样式，则控件将以视觉样式进行绘制
 
             Stopwatch watch = new Stopwatch();
-            watch.Start();
-            //计时
+            watch.Start();      //计时
 
             List<string> files = new List<string>();
             Param para = new Param();
             para.ParseParam(args);
             para.getAllInputFile(ref files);
-            if (files.Count == 0 && args.Length != 0)
-            {
+            if (files.Count == 0 && args.Length != 0){
                 Console.WriteLine("[wiff] <Exception>: Warning: No input files.");
                 return;
-            }
-            else
-            {
+            }else{
                 for (int i = 0; i < files.Count; i++){
-                
                     extract(files[i], para);
-                    //用了批处理，但pParse调用的时候却是一次一个文件；
+                    // 用了批处理，但 pParse 调用 WiffReader 时使用的是一次一个文件；
                 }
             }
-
 
             watch.Stop();
             string runtime = (watch.ElapsedMilliseconds / 1000).ToString();

@@ -1,5 +1,6 @@
 #include "Head.h"
 
+extern int countStep;
 extern parainfo para;
 unordered_map<int, int> mapScanPosPf1;		//¸ÄÓÃ¹þÏ£
 extern vector<psmInfo> psmVec;				//PSM»º³åÇø
@@ -10,9 +11,11 @@ vector<int> posPf1;
 
 void readPf1idx(){
 
-	cout << "\nStep5: Read .pf1idx file." << endl;
+	cout << "\n[Step" << countStep++ << "]" <<  " Read .pf1idx file" << endl;
 
 	for (int i = 0; i < psmVec.size(); i++){
+
+		printf("<RunningInformation> %.2lf%%\r", i * 100.0 / psmVec.size());
 	
 		FILE* inputPf1idx = fopen(psmVec[i].pf1idx.c_str(), "rb");
 		if (inputPf1idx == NULL){
@@ -66,9 +69,11 @@ void calcuPf1Pos(){
 
 void readPf1(){
 
-	cout << "\nStep6: Read .pf1 file." << endl;
+	cout << "\n[Step" << countStep++ << "]" << " Read .pf1 file." << endl;
 
 	for (int i = 0; i < psmVec.size(); i++){
+
+		printf("<RunningInformation> %.2lf%%\r", i * 100.0 / psmVec.size());
 
 		ifstream input_pf1;
 		input_pf1.open(psmVec[i].pf1, ios::binary);
@@ -180,6 +185,6 @@ void calcuPIF(){
 	//calcuPf1Pos();
 	readPf1();
 	//calcuResult();
-	cout << "calculation of PIF complete..." << endl;
+	cout << runningInfo << " calculation of PIF complete" << endl;
 }
 

@@ -322,6 +322,9 @@ void readPara(char* argv[]){									//打开m_cmdInfo[1] .para文件读参数�
 	para.PsmFDR							= atof(param["PsmFDR"].c_str());
 	para.ProteinFDR					= atof(param["ProteinFDR"].c_str());
 	para.correct							= atoi(param["Correct"].c_str());
+	para.minRange						= atof(param["minRange"].c_str());
+	para.maxRange						= atof(param["maxRange"].c_str());
+	para.runVSN							=	atoi(param["runVSN"].c_str());
 
 	setBinPath(argv);
 	displayPara();

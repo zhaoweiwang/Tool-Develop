@@ -76,11 +76,15 @@ typedef struct parainfo{
 	string fasta_path = "";											//fasta文件路径
 	string modification_path = "";								//modification.ini文件路径
 
+	double minRange = 0.0;										//pIDL定量的最大范围
+	double maxRange = 0.0;										//pIDL定量的最小范围
 	double PIF = 0.75;													//PIF值
 	double PsmFDR = 0.01;										//PSM层次卡的FDR值
 	double ProteinFDR = 0.01;									//Protein层次卡的FDR值
 
 	bool correct = true;												//是否使用校正矩阵
+	bool runVSN = true;												//是否使用VSN算法
+
 }paraInfo;
 
 //谱峰
@@ -88,6 +92,12 @@ typedef struct peakinfo{
 	double mz;
 	double iten;
 }peakInfo;
+
+//pIDL方法中BY离子对（强度和）
+typedef struct BYIteninfo{
+	double fz = 0.0;
+	double fm = 0.0;
+}BYItenInfo;
 
 //包含一个psm需要的全部信息
 typedef struct psminfo{
@@ -98,18 +108,18 @@ typedef struct psminfo{
 	string pf2idx			= "";
 	string pf2				= "";
 
-	int		scan			= 0;
-	double	mass1			= 0.0;
-	int		charge			= 0;
-	double	fdr				= 0.0;
-	string	pepSq			= "";
-	double	mass2			= 0.0;
-	double  massGapDa		= 0.0;
-	double  massGapPpm		= 0.0;
-	double	score			= 0.0;
-	string  modification	= "";
-	string	proAc			= "";
-	string	prosandCons		= "";
+	int scan					= 0;
+	double mass1		= 0.0;
+	int charge				= 0;
+	double fdr				= 0.0;
+	string pepSq			= "";
+	double mass2		= 0.0;
+	double massGapDa		= 0.0;
+	double massGapPpm	= 0.0;
+	double score					= 0.0;
+	string modification		= "";
+	string proAc					= "";
+	string prosandCons		= "";
 
 	vector<modificationInfo> mod;
 	vector<peakInfo> peaks;
@@ -129,11 +139,14 @@ typedef struct psminfo{
 	int precuNums = 0;
 	vector<peakInfo> precus;
 
-	vector<double> a1Iten;			//a1+离子强度
-	vector<double> allIten;			//b、y离子强度和
-	vector<double> a1Ratio;			//a1+离子比值
-	vector<double> allRatio;			//b、y离子比值
-	vector<string> annotation;		//标记匹配到的离子类型
+	//pIDL区
+	vector<BYItenInfo> a1PairInten;				//a1+离子强度对
+	vector<BYItenInfo> allIPairInten;			//all离子强度对
+	vector<double> a1RatioVSN;					//a1+离子比值，VSN处理后的
+	vector<double> allRatioVSN;					//all离子比值，VSN处理后的
+	vector<double> a1Ratio;							//a1+离子比值，正常计算下得到的
+	vector<double> allRatio;							//all离子比值，正常计算下得到的
+	set<string> annotation;								//标记匹配到的离子类型，n重中有一重匹配到则算
 
 	//TODO: 利用继承派生出各种定量方法类
 }psmInfo;
@@ -182,7 +195,7 @@ public:
 
 //参数区
 const string TIMESTRING = "2016-02-18 16:00";
-
+const string runningInfo = "<RunningInformation>";
 
 //函数声明区
 
@@ -232,7 +245,12 @@ void readCmdline(const int argc, char* argv[]);
 返回：	无
 */
 void readData();
-
+/*
+该模块主要支持pFind 3的搜索结果，通过读取pFind.spectra文件获取PSMs
+通过读取pParse.exe导出的pf2idx、pf2文件提取谱峰
+然后根据具体的定量方法提取谱峰，赋给对应的PSM
+如果pIsobariQ.exe需要扩展支持其它引擎的定量结果，仅需扩展对应引擎分支即可，该分支属于pFind 3
+*/
 
 /*
 函数名：	calcuReporter

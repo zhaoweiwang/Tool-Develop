@@ -1,5 +1,6 @@
 #include "Head.h"
 
+extern int countStep;
 extern parainfo para;
 extern vector<psmInfo> psmVec;					//PSM»º³åÇø
 
@@ -52,38 +53,69 @@ void outputPsmspIDL(){
 		exit(1);
 	}
 	else{
-		cout << "Successfully open the file of " << para.output_ratio_path << "." << endl;
+		cout << runningInfo << "Successfully open the file of " << para.output_ratio_path << "." << endl;
 	}
 
 
 	out << "Title\tScan\tScore\tMass1\tMass2\tCharge\tFDR\tPeptideSquence\tModification\tProteinAc\t";
 
+	for (int i = 0; i < psmVec[0].reporter.size(); ++i)
+		out << "a1_Inten" << to_string(i) + "\t";
 	for (int i = 0; i < psmVec[0].a1Ratio.size(); ++i) 
 		out << "a1_ratio" + to_string(i) + "\t";
+	for (int i = 0; i < psmVec[0].a1RatioVSN.size(); ++i)
+		out << "a1_ratio_VSN" + to_string(i) + "\t";
 	out << "annotation" << "\t";
 	for (int i = 0; i < psmVec[0].allRatio.size(); ++i) 
-		out << "all_ratip" + to_string(i) + "\t";
+		out << "all_ratio" + to_string(i) + "\t";
 	out << endl;
+
 
 	for (int i = 0; i < psmVec.size(); i++){
 		out << psmVec[i].title << "\t" << psmVec[i].scan << "\t" << psmVec[i].score << "\t" << psmVec[i].mass1 << "\t"
 			<< psmVec[i].mass2 << "\t" << psmVec[i].charge << "\t" << psmVec[i].fdr << "\t" << psmVec[i].pepSq << "\t"
 			<< psmVec[i].modification << "\t" << psmVec[i].proAc << "\t";
 
-		for (int j = 0; j < psmVec[i].a1Ratio.size(); ++j)
-			out << psmVec[i].a1Ratio[j] << "\t";
+		//cout << psmVec[i].title << endl;
 
+		for (int j = 0; j < psmVec[0].reporter.size(); ++j){
+			out << psmVec[i].reporter[j] << "\t";
+		}
+
+		for (int j = 0; j < psmVec[i].a1Ratio.size(); ++j){
+			if (psmVec[i].a1Ratio[j] != NAN){
+				out << psmVec[i].a1Ratio[j] << "\t";
+				//cout << psmVec[i].a1Ratio[j] << endl;
+				
+			}
+			else
+				out << "NAN" << "\t";
+		}
+		//getchar();
+			
+		for (int j = 0; j < psmVec[i].a1RatioVSN.size(); ++j){
+			if (psmVec[i].a1RatioVSN[j] != NAN)
+				out << psmVec[i].a1RatioVSN[j] << "\t";
+			else
+				out << "NAN" << "\t";
+		}
+
+		set<string>::iterator iter = psmVec[i].annotation.begin();
 		if (psmVec[i].annotation.size() != 0){
-			out << "[" << psmVec[i].annotation[0];
-			for (int j = 1; j < psmVec[i].annotation.size(); ++j)
-				out << ", " << psmVec[i].annotation[j];
+			out << "[" << *iter;
+			for (iter++; iter != psmVec[i].annotation.end(); ++iter)
+				out << ", " << *iter;
 			out << "]" << "\t";
 		}else
 			out << "NAN" << "\t";
 
 
-		for (int j = 0; j < psmVec[i].allRatio.size(); ++j)
-			out << psmVec[i].allRatio[j] << "\t";
+		for (int j = 0; j < psmVec[i].allRatio.size(); ++j){
+			if (psmVec[i].allRatio[j] != NAN)
+				out << psmVec[i].allRatio[j] << "\t";
+			else
+				out << "NAN" << "\t";
+		}
 		out << endl;
 	}
 
@@ -127,7 +159,7 @@ void outputProtein(){
 
 void outputResult(){
 
-	cout << "\nStep9: Output .spectra and .protein file." << endl;
+	cout << "\n[Step" << countStep++ << "]" << " Output .spectra and .protein file completely" << endl;
 	
 	if (para.quantMethod == 4){
 		outputPsmspIDL();

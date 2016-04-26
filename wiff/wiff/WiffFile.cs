@@ -14,14 +14,10 @@ using Clearcore2.StructuredStorage;
 using Clearcore2.Utility;
 using Clearcore2.ProjectUtilities.Options;
 
-namespace wiff
-{
-    class WiffFile
-    {
-        public WiffFile(string wiffpath)
-        {
-            string[] keys = 
-			{
+namespace wiff{
+    class WiffFile{
+        public WiffFile(string wiffpath){
+            string[] keys = {
 			"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
 			"<license_key>"+    
 			"<company_name>Proteo Wizard|Redistributable Beta Agreemeent 2012-03-20</company_name>"+
@@ -33,15 +29,13 @@ namespace wiff
             Clearcore2.Licensing.LicenseKeys.Keys = keys;
             provider = new AnalystWiffDataProvider();
             m_batch = AnalystDataProviderFactory.CreateBatch(wiffpath, provider);
-
             FileInfo tmpfile = new FileInfo(wiffpath);
             int pos = tmpfile.Name.LastIndexOf(".");
             name = tmpfile.Name.Substring(0, pos);
         }
         ~WiffFile() { provider.Close(); }
 
-        public static WiffFile Create(string wiffpath)
-        {
+        public static WiffFile Create(string wiffpath){
             return new WiffFile(wiffpath);
         }
         //这四个数据结构都是AB提供的API
@@ -49,48 +43,39 @@ namespace wiff
         public Batch m_batch;
         public Sample m_sample;
         public MSExperiment m_msExperiment;
-        //        public MassSpectrum m_spectrum;
-        //        public MassSpectrumInfo m_spectrumInfo;
-
+        //public MassSpectrum m_spectrum;
+        //public MassSpectrumInfo m_spectrumInfo;
 
         public int currentSample = -1;
         public int currentPeriod = -1;
         public int currentExperiment = -1;
         public int currentCycle = -1;
 
-        public string name;//file名字
+        public string name;         // file 名字
 
         private List<string> sampleNames = new List<string>();
 
-
-        //从batch中得到一个sample,注意sample从1开始
-        public void GetSample(int sampleId)
-        {
+        // 从 batch 中得到一个 sample, 注意 sample 从 1 开始
+        public void GetSample(int sampleId){
             m_sample = m_batch.GetSample(sampleId - 1);
         }
 
-        //从sample中得到一个MSExperiment
-        public void GetMSExperiment(int experiment)
-        {
+        // 从sample中得到一个MSExperiment
+        public void GetMSExperiment(int experiment){
             m_msExperiment = m_sample.MassSpectrometerSample.GetMSExperiment(experiment - 1);
         }
 
-        //这段代码是从Proteowizard里面直接拷贝过来的,可以获得Sample的数目
-        public List<string> GetSampleNames()
-        {
-            if (sampleNames.Count == 0)
-            {
+        // 这段代码是从 ProteoWizard 里面直接拷贝过来的, 可以获得 Sample 的数目
+        public List<string> GetSampleNames(){
+            if (sampleNames.Count == 0){
                 Dictionary<String, int> duplicateCountMap = new Dictionary<String, int>();
                 string[] sampleNamesManaged = m_batch.GetSampleNames();
                 sampleNames = new List<string>(sampleNamesManaged);
 
-
-                for (int i = 0; i < sampleNames.Count; ++i)
-                {
+                for (int i = 0; i < sampleNames.Count; ++i){
                     if (!duplicateCountMap.ContainsKey(sampleNames[i]))
                         duplicateCountMap.Add(sampleNames[i], 1);
-                    else
-                    {
+                    else{
                         int duplicateCount = duplicateCountMap[sampleNames[i]]++;
                         sampleNames[i] += " (" + (duplicateCount + 1).ToString() + ") ";
                     }
@@ -99,14 +84,12 @@ namespace wiff
             return sampleNames;
         }
 
-        public int GetSampleCount()
-        {
+        public int GetSampleCount(){
             return GetSampleNames().Count;
         }
     }
-    class Spectrum
-    {
-     //   public int experimentCount;
+    class Spectrum{
+        // public int experimentCount;
         public TotalIonChromatogram[] array;
         public MSExperiment m_msExperiment;
         public MassSpectrum m_spectrum;
@@ -124,48 +107,35 @@ namespace wiff
         public int cycle;
         public bool pointsAreContinuous;
 
-        public int GetMSLevel()
-        {
+        public int GetMSLevel(){
             return m_spectrumInfo.MSLevel == 0 ? 1 : m_spectrumInfo.MSLevel;
         }
 
-        public void GetData(bool doCentroid, out List<double> mz, out List<double> intensities)
-        {
-            if (doCentroid && pointsAreContinuous)
-            {
+        public void GetData(bool doCentroid, out List<double> mz, out List<double> intensities){
+            if (doCentroid && pointsAreContinuous){
                 if (peakList == null) peakList = this.m_msExperiment.GetPeakArray(cycle - 1);
                 int numPoints = peakList.Length;
                 double[] arrmz = new double[numPoints];
                 double[] arrints = new double[numPoints];
                 mz = new List<double>(arrmz);
                 intensities = new List<double>(arrints);
-                for (int i = 0; i < numPoints; ++i)
-                {
+                for (int i = 0; i < numPoints; ++i){
                     PeakClass peak = peakList[i];
                     mz[i] = peak.apexX;
                     intensities[i] = peak.apexY;
                 }
-            }
-            else
-            {
+            }else{
                 mz = new List<double>(this.m_spectrum.GetActualXValues());
                 intensities = new List<double>(this.m_spectrum.GetActualYValues());
             }
         }
 
-        public int GetDataSize(bool doCentroid)
-        {
-            if (doCentroid)
-            {
+        public int GetDataSize(bool doCentroid){
+            if (doCentroid){
                 if (peakList == null) peakList = this.m_msExperiment.GetPeakArray(cycle - 1);
                 return peakList.Length;
-            }
-            else
-            {
-                //if (this.m_spectrum == null)
-                //{
-                    this.m_msExperiment.AddZeros(this.m_spectrum, 1);
-                //}
+            }else{
+                this.m_msExperiment.AddZeros(this.m_spectrum, 1);
                 return this.m_spectrum.NumDataPoints;
             }
         }

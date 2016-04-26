@@ -1,13 +1,14 @@
 ﻿#include "Head.h"
 
+extern int countStep;
 extern parainfo para;
 double fdr = 0.0;
 
 extern unordered_map<string, double> mod2mass;
 
-//vector<vector<int>> pf2Vec;			//pf2idx缓冲区
+//vector<vector<int>> pf2Vec;						//pf2idx缓冲区
 unordered_map<int, int> mapScanPos;		//改用哈希
-vector<psmInfo> psmVec;					//PSM缓冲区
+vector<psmInfo> psmVec;							//PSM缓冲区
 
 vector<string> reType{ "iTRAQ-4plex", "iTRAQ-8plex", "TMT-6plex", "TMT-10plex", "pIDL-Nplex"};
 vector<double> iTRAQ4{ 114.1, 115.1, 116.1, 117.1 };
@@ -58,16 +59,18 @@ const double Y_Mass = massH2O;
 
 void readPf2idx(){
 
-	cout << "Step2: Read .pf2idx file." << endl;
+	cout << "[Step" << countStep++  << "]" << " Read .pf2idx file to get PSMs` peak information position" << endl;
 
 	for (int i = 0; i < psmVec.size(); i++){
 	
 		int scan = 0;
 		int pos = 0;
 
+		printf("<RunningInformation> %.2lf%%\r", i * 100.0 / psmVec.size());
+
 		FILE* inputPf2idx = fopen(psmVec[i].pf2idx.c_str(), "rb");
 		if (inputPf2idx == NULL){
-			cout << "Failed to open " << psmVec[i].pf2idx << " File." << endl;
+			cout << "Failed to open " << psmVec[i].pf2idx << " File" << endl;
 		}
 
 		while (!feof(inputPf2idx)){
@@ -85,30 +88,38 @@ void readPf2idx(){
 
 void readPsms(){
 
-	cout << "\nStep1: Read .spectra file." << endl;
+	cout << "\n[Step" << countStep++ << "]" <<  " Read .spectra file and load all of PSMs into memory" << endl;
 
 	ifstream input_spectra;
 	input_spectra.open(para.input_spectra_path, ios::binary);
 
 	if (!input_spectra.is_open()){
-		cout << "Failed to open " << para.input_spectra_path << " File." << endl;
+		cout << "Failed to open " << para.input_spectra_path << " File" << endl;
 		exit(0);
-	}else{
+	}/*else{
 		cout << para.input_spectra_path << " File open successfully." << endl;
-	}
+	}*/
 
 	string tempPsm;
 	getline(input_spectra, tempPsm);					//过掉表头一行
+
+	//int counter = 1;
 	while (para.PsmFDR - fdr >= 0 && !input_spectra.eof()){
+		
+		//if (counter == 10)
+		//	break;
+
+		//counter++;
+		
 
 		psmInfo psm;
 		getline(input_spectra, tempPsm);
 		if (tempPsm == ""){
-			cout << "Successfully read " << para.input_spectra_path << "." << endl;
+			//cout << "Successfully read " << para.input_spectra_path << "." << endl;
 			break;
-		}												//防止最后一行是换行的处理，原则上不会出现这种情况；
+		}																		//防止最后一行是换行的处理，原则上不会出现这种情况；
 
-		vector<int> t_pos;								//'\t'位点所在；
+		vector<int> t_pos;										//获取'\t'位点所在；
 		for (int i = 0; i < tempPsm.size(); i++){
 			if (tempPsm[i] == '\t')
 				t_pos.push_back(i);
@@ -117,12 +128,13 @@ void readPsms(){
 		fdr = atof(tempPsm.substr(t_pos[3] + 1, t_pos[4] - t_pos[3] - 1).c_str());
 		if (0.01 - fdr < 0)	break;
 		else{
-			if (tempPsm.substr(t_pos[14] + 1, t_pos[15] - t_pos[14] - 1) == "decoy")	  //TODO: 如果有污染库则需要加；
+			if (tempPsm.substr(t_pos[14] + 1, t_pos[15] - t_pos[14] - 1) == "decoy")		//TODO: 如果有污染库则需要加；
 				continue;
 
 			psm.title = tempPsm.substr(0, t_pos[0]);
 			psm.scan = atoi(tempPsm.substr(t_pos[0] + 1, t_pos[1] - t_pos[0] - 1).c_str());
 
+			//获取Title对应的pf文件列表
 			psm.pf1idx = psm.title.substr(0, psm.title.find('.')) + ".pf1idx";
 			psm.pf1 = psm.title.substr(0, psm.title.find('.')) + ".pf1";
 			psm.pf2idx = psm.title.substr(0, psm.title.find('.')) + "_HCDFT.pf2idx";
@@ -140,36 +152,38 @@ void readPsms(){
 			//cout << "pf2:" << psm.pf2 << endl;
 			//getchar();
 
-			psm.mass1 = atof(tempPsm.substr(t_pos[1]+1, t_pos[2]-t_pos[1]-1).c_str());
-			psm.charge = atoi(tempPsm.substr(t_pos[2]+1, t_pos[3]-t_pos[2]-1).c_str());
-			psm.fdr = atof(tempPsm.substr(t_pos[3] + 1, t_pos[4] - t_pos[3] - 1).c_str());
-			psm.pepSq = tempPsm.substr(t_pos[4] + 1, t_pos[5] - t_pos[4] - 1);
-			psm.mass2 = atof(tempPsm.substr(t_pos[5] + 1, t_pos[6] - t_pos[5] - 1).c_str());
-			psm.massGapDa = atof(tempPsm.substr(t_pos[6] + 1, t_pos[7] - t_pos[6] - 1).c_str());
-			psm.massGapPpm = atof(tempPsm.substr(t_pos[7] + 1, t_pos[8] - t_pos[7] - 1).c_str());
-			psm.score = atof(tempPsm.substr(t_pos[8] + 1, t_pos[9] - t_pos[8] - 1).c_str());
-			psm.modification = tempPsm.substr(t_pos[9] + 1, t_pos[10] - t_pos[9] - 1);
-			psm.proAc = tempPsm.substr(t_pos[11] + 1, t_pos[12] - t_pos[11] - 1);
-			psm.prosandCons = tempPsm.substr(t_pos[14] + 1, t_pos[15] - t_pos[14] - 1);
-			psm.pf2Pos = mapScanPos[psm.scan];
+			psm.mass1				= atof(tempPsm.substr(t_pos[1]+1, t_pos[2]-t_pos[1]-1).c_str());
+			psm.charge				= atoi(tempPsm.substr(t_pos[2]+1, t_pos[3]-t_pos[2]-1).c_str());
+			psm.fdr					= atof(tempPsm.substr(t_pos[3] + 1, t_pos[4] - t_pos[3] - 1).c_str());
+			psm.pepSq				= tempPsm.substr(t_pos[4] + 1, t_pos[5] - t_pos[4] - 1);
+			psm.mass2				= atof(tempPsm.substr(t_pos[5] + 1, t_pos[6] - t_pos[5] - 1).c_str());
+			psm.massGapDa		= atof(tempPsm.substr(t_pos[6] + 1, t_pos[7] - t_pos[6] - 1).c_str());
+			psm.massGapPpm	= atof(tempPsm.substr(t_pos[7] + 1, t_pos[8] - t_pos[7] - 1).c_str());
+			psm.score				= atof(tempPsm.substr(t_pos[8] + 1, t_pos[9] - t_pos[8] - 1).c_str());
+			psm.modification		= tempPsm.substr(t_pos[9] + 1, t_pos[10] - t_pos[9] - 1);
+			psm.proAc				= tempPsm.substr(t_pos[11] + 1, t_pos[12] - t_pos[11] - 1);
+			psm.prosandCons	= tempPsm.substr(t_pos[14] + 1, t_pos[15] - t_pos[14] - 1);
+			//psm.pf2Pos				= mapScanPos[psm.scan];
 
 			psmVec.push_back(psm);
 		}
 	}
-	cout << "Successfully read " << para.input_spectra_path << "." << endl;
-	cout << "Total PSM number: " << psmVec.size() << endl << endl;
+	cout << runningInfo << " Successfully read " << para.input_spectra_path  << endl;
+	cout << runningInfo << " Total PSM number: " << psmVec.size() << endl << endl;
 }
 
 void readPf2(){
 
-	cout << "\nStep3: Read .pf2 file." << endl;
+	cout << "\n[Step" << countStep++ << "]" << " Read .pf2 file though .pf2idx to get PSMs` peaks" << endl;
 
 	for (int i = 0; i < psmVec.size(); i++){
+
+		printf("<RunningInformation> %.2lf%%\r", i * 100.0 / psmVec.size());
 
 		ifstream input_pf2;
 		input_pf2.open(psmVec[i].pf2, ios::binary);
 		if (!input_pf2.is_open()){
-			cout << "Failed to open " << psmVec[i].pf2 << " File." << endl;
+			cout << "Failed to open " << psmVec[i].pf2 << " File" << endl;
 		}
 
 		input_pf2.seekg(psmVec[i].pf2Pos + sizeof(int), ios::beg);
@@ -185,13 +199,46 @@ void readPf2(){
 		input_pf2.close();
 	}
 
-	cout << "Successfully read all .pf2 File." << endl;
+	cout << runningInfo <<  " Successfully read all .pf2 File" << endl;
 }
 
-int getpIDLplexPPM(double mass, int *mass_inten, double &mass_error, int i){
+//ppm量级下的开窗口 距离最近 匹配算法
+int getpIDLplexPPM_MinMass(double mass, int *mass_inten, double &mass_error, int i){
 	int start = (int)(mass - mass*para.detaFragment);
 	int end = (int)(mass + mass*para.detaFragment);
-	if (start <= 0 || end >= 10000)
+	if (start <= para.minRange || end >= para.maxRange)
+		return -1;
+	double min_Gap = DBL_MAX;
+	int max_k = -1;
+	for (int k = mass_inten[start - 1]; k < mass_inten[end]; ++k){
+		double tmpd_error = fabs(((psmVec[i].peaks[k].mz - mass) / mass));
+		double tmpd = psmVec[i].peaks[k].iten;
+		if (tmpd_error <= para.detaFragment && tmpd_error <= min_Gap){
+			if (tmpd_error == min_Gap){
+				if (tmpd > psmVec[i].peaks[max_k].iten)
+					max_k = k;
+				else
+					continue;
+			}
+			else{
+				min_Gap = tmpd_error;
+				max_k = k;
+			}
+		}
+	}
+
+	if (max_k != -1){
+		mass_error = (psmVec[i].peaks[max_k].mz - mass) * 1.0e6 / mass;
+	}
+
+	return max_k;
+}
+
+//ppm量级下的开窗口 窗口中强度最大 匹配算法
+int getpIDLplexPPM_MaxInten(double mass, int *mass_inten, double &mass_error, int i){
+	int start = (int)(mass - mass*para.detaFragment);
+	int end = (int)(mass + mass*para.detaFragment);
+	if (start <= para.minRange || end >= para.maxRange)
 		return -1;
 	double max_intensity = DBL_MIN;
 	int max_k = -1;
@@ -211,15 +258,60 @@ int getpIDLplexPPM(double mass, int *mass_inten, double &mass_error, int i){
 	return max_k;
 }
 
-int getpIDLplexDa(double mass, int *mass_inten, double &mass_error, int i){
+//Da量级下的开窗口 距离最近 匹配算法
+int getpIDLplexDa_MinMass(double mass, int *mass_inten, double &mass_error, int i){
+
+
+
 	int start = (int)(mass - para.detaFragment);
 	int end = (int)(mass + para.detaFragment);
-	if (start <= 0 || end >= 10000)
+
+	//if (psmVec[i].scan == 50800){
+	//	cout << mass - para.detaFragment << " " << mass + para.detaFragment << endl;
+	//	cout << start << " " << end << endl;
+	//	cout << psmVec[i].peaks[mass_inten[start - 1]].mz << " " << psmVec[i].peaks[mass_inten[end]].mz << endl;
+	//	getchar();
+	//}
+
+
+	if (start <= para.minRange || end >= para.maxRange)				//如果窗口不在用户设置的有效范围内则return
+		return -1;
+	double min_Gap = DBL_MAX;
+	int max_k = -1;
+	for (int k = mass_inten[start - 1]; k < mass_inten[end]; ++k){
+		double tmpd_error = fabs(psmVec[i].peaks[k].mz - mass);
+		double tmpd = psmVec[i].peaks[k].iten;
+		if (tmpd_error <= para.detaFragment && tmpd_error <= min_Gap){
+			if (tmpd_error == min_Gap){												//最小距离的最大强度峰
+				if (tmpd > psmVec[i].peaks[max_k].iten)
+					max_k = k;
+				else
+					continue;
+			}
+			else{
+				min_Gap = tmpd_error;
+				max_k = k;
+			}
+		}
+	}
+
+	if (max_k != -1){
+		mass_error = psmVec[i].peaks[max_k].mz - mass;
+	}
+
+	return max_k;
+}
+
+//Da量级下的开窗口 窗口中强度最大 匹配算法
+int getpIDLplexDa_MaxInten(double mass, int *mass_inten, double &mass_error, int i){
+	int start = (int)(mass - para.detaFragment);
+	int end = (int)(mass + para.detaFragment);
+	if (start <= para.minRange || end >= para.maxRange)
 		return -1;
 	double max_intensity = DBL_MIN;
 	int max_k = -1;
 	for (int k = mass_inten[start - 1]; k < mass_inten[end]; ++k){
-		double tmpd_error = fabs(((psmVec[i].peaks[k].mz - mass) / mass));
+		double tmpd_error = fabs(psmVec[i].peaks[k].mz - mass);
 		double tmpd = psmVec[i].peaks[k].iten;
 		if (tmpd_error <= para.detaFragment && tmpd > max_intensity){
 			max_intensity = tmpd;
@@ -228,7 +320,7 @@ int getpIDLplexDa(double mass, int *mass_inten, double &mass_error, int i){
 	}
 
 	if (max_k != -1){
-		mass_error = (psmVec[i].peaks[max_k].mz - mass) - mass;
+		mass_error = psmVec[i].peaks[max_k].mz - mass;
 	}
 
 	return max_k;
@@ -240,10 +332,10 @@ void calpIDL(){
 		//cout << psmVec[i].pepSq << endl;
 		//cout << psmVec[i].modification << endl;
 
-		vector<vector<peakInfo>> peaks;
+		vector<vector<peakInfo>> peaks;				//多少标，对应多少组peaks
 		peaks.resize(para.pIDLplex.size());
 
-		modificationInfo singleMod;
+		modificationInfo singleMod;								//提取modificatioon
 		if (!psmVec[i].modification.empty()){
 			string tempMod = psmVec[i].modification;
 			while (tempMod.find(';') != string::npos){
@@ -294,7 +386,7 @@ void calpIDL(){
 			else
 				currindex = mass_inten[j];
 		}
-
+		//cout << psmVec[i].title << endl;
 		//开始捞谱峰
 		for (int j = 0; j < para.pIDLplex.size(); ++j){
 			mod_mass[0] = para.pIDLplex[j].massN;
@@ -310,23 +402,32 @@ void calpIDL(){
 			int index0 = -1;
 
 			if (para.FTMSType == "ppm" || para.FTMSType == "PPM" || para.FTMSType == "Ppm")
-				index0 = getpIDLplexPPM(a1, mass_inten, mass_error0, i);
+				//index0 = getpIDLplexPPM_MinMass(a1, mass_inten, mass_error0, i);
+				index0 = getpIDLplexPPM_MaxInten(a1, mass_inten, mass_error0, i);
 			else
-				index0 = getpIDLplexDa(a1, mass_inten, mass_error0, i);
+				//index0 = getpIDLplexDa_MinMass(a1, mass_inten, mass_error0, i); 
+				index0 = getpIDLplexDa_MaxInten(a1, mass_inten, mass_error0, i);
+			
+			//if (psmVec[i].scan == 50800)
+			//	cout << "a1+ mz：" << a1 << endl;
 
 			peakInfo tmp;
 			tmp.mz = a1;
 			tmp.iten = 0.0;
 			if (index0 != -1){
 				peaks[j].push_back(psmVec[i].peaks[index0]);
-				psmVec[i].annotation.push_back("a1+");
+				psmVec[i].annotation.insert("a1+");
 
-				psmVec[i].a1Iten.push_back(psmVec[i].peaks[index0].iten);
+				psmVec[i].reporter.push_back(psmVec[i].peaks[index0].iten);
+				//cout << psmVec[i].peaks[index0].mz << " " << psmVec[i].peaks[index0].iten << endl;
+				//getchar();
+				//psmVec[i].a1Iten.push_back(psmVec[i].peaks[index0].iten);
 			}
 			else{
 				peaks[j].push_back(tmp);
 
-				psmVec[i].a1Iten.push_back(0.0);
+				psmVec[i].reporter.push_back(0.0);
+				//psmVec[i].a1Iten.push_back(0.0);
 			}
 
 			//cout << a1 << ":" << psmVec[i].peaks[index0].iten << endl;
@@ -338,29 +439,34 @@ void calpIDL(){
 				double mass_error = 0.0;
 				int index = -1;
 				if (para.FTMSType == "ppm" || para.FTMSType == "PPM" || para.FTMSType == "Ppm")
-					index = getpIDLplexPPM(bmass1, mass_inten, mass_error, i);
+					//index = getpIDLplexPPM_MinMass(bmass1, mass_inten, mass_error, i);
+					index = getpIDLplexPPM_MaxInten(bmass1, mass_inten, mass_error, i);
 				else
-					index0 = getpIDLplexDa(bmass1, mass_inten, mass_error0, i);
+					//index = getpIDLplexDa_MinMass(bmass1, mass_inten, mass_error0, i);
+					index = getpIDLplexDa_MaxInten(bmass1, mass_inten, mass_error, i);
 
 
 				tmp.mz = bmass1;
 				if (index != -1){
 					peaks[j].push_back(psmVec[i].peaks[index]);
-					psmVec[i].annotation.push_back("b" + to_string(k+1) + "+");
+					psmVec[i].annotation.insert("b" + to_string(k+1) + "+");
 				}
 				else
 					peaks[j].push_back(tmp);
 
 				double bmass2 = (tmpmass + B_Mass + 2 * massZI) / 2.0;
 				if (para.FTMSType == "ppm" || para.FTMSType == "PPM" || para.FTMSType == "Ppm")
-					index = getpIDLplexPPM(bmass2, mass_inten, mass_error, i);
+					//index = getpIDLplexPPM_MinMass(bmass2, mass_inten, mass_error, i);
+					index = getpIDLplexPPM_MaxInten(bmass2, mass_inten, mass_error, i);
 				else
-					index0 = getpIDLplexDa(bmass2, mass_inten, mass_error0, i);
+					//index = getpIDLplexDa_MinMass(bmass2, mass_inten, mass_error, i);
+					index = getpIDLplexDa_MaxInten(bmass2, mass_inten, mass_error, i);
+
 
 				tmp.mz = bmass2;
 				if (index != -1){
 					peaks[j].push_back(psmVec[i].peaks[index]);
-					psmVec[i].annotation.push_back("b" + to_string(k + 1) + "++");
+					psmVec[i].annotation.insert("b" + to_string(k + 1) + "++");
 				}
 				else
 					peaks[j].push_back(tmp);
@@ -375,14 +481,16 @@ void calpIDL(){
 				int index = -1;
 
 				if (para.FTMSType == "ppm" || para.FTMSType == "PPM" || para.FTMSType == "Ppm")
-					index = getpIDLplexPPM(ymass1, mass_inten, mass_error, i);
+					//index = getpIDLplexPPM_MinMass(ymass1, mass_inten, mass_error, i);
+					index = getpIDLplexPPM_MaxInten(ymass1, mass_inten, mass_error, i);
 				else
-					index0 = getpIDLplexDa(ymass1, mass_inten, mass_error0, i);
+					//index = getpIDLplexDa_MinMass(ymass1, mass_inten, mass_error0, i);
+					index = getpIDLplexDa_MaxInten(ymass1, mass_inten, mass_error, i);
 
 				tmp.mz = ymass1;
 				if (index != -1){
 					peaks[j].push_back(psmVec[i].peaks[index]);
-					psmVec[i].annotation.push_back("y" + to_string(psmVec[i].pepSq.size() - k) + "+");
+					psmVec[i].annotation.insert("y" + to_string(psmVec[i].pepSq.size() - k) + "+");
 				}
 				else
 					peaks[j].push_back(tmp);
@@ -390,22 +498,28 @@ void calpIDL(){
 				double ymass2 = (tmpmass + Y_Mass + 2 * massZI) / 2;
 
 				if (para.FTMSType == "ppm" || para.FTMSType == "PPM" || para.FTMSType == "Ppm")
-					index = getpIDLplexPPM(ymass2, mass_inten, mass_error, i);
+					//index = getpIDLplexPPM_MinMass(ymass2, mass_inten, mass_error, i);
+					index = getpIDLplexPPM_MaxInten(ymass2, mass_inten, mass_error, i);
 				else
-					index0 = getpIDLplexDa(ymass2, mass_inten, mass_error0, i);
+					//index = getpIDLplexDa_MinMass(ymass2, mass_inten, mass_error0, i);
+					index = getpIDLplexDa_MaxInten(ymass2, mass_inten, mass_error, i);
 
 				tmp.mz = ymass2;
 				if (index != -1){
 					peaks[j].push_back(psmVec[i].peaks[index]);
-					psmVec[i].annotation.push_back("y" + to_string(psmVec[i].pepSq.size() - k) + "++");
+					psmVec[i].annotation.insert("y" + to_string(psmVec[i].pepSq.size() - k) + "++");
 				}
 				else
 					peaks[j].push_back(tmp);
 
 			}
 		}
+		//谱峰提取结束，peak[pIDL.size][n]记录了pep[i]的a1、b、y离子对
 
+		//cout << psmVec[i].title << " " << psmVec[i].pepSq << endl;
+		//getchar();
 
+		//计算正常情况的比值，同时把碎片离子对的强度两两存起来
 		vector<double> a1_ratio;
 		vector<double> all_ratio;
 		double fz = 0.0, fm = 0.0;
@@ -413,32 +527,66 @@ void calpIDL(){
 			for (int j = 0; j < peaks[k].size(); ++j){
 				if (peaks[0][j].iten != 0.0 && peaks[k][j].iten != 0.0 &&
 					peaks[0][j].mz != peaks[k][j].mz){
-					//if (peaks[0][j].mz >= para.pIDLplex[0].massN && peaks[0][j].mz <= para.pIDLplex[0].massC &&
-						//peaks[k][j].mz >= para.pIDLplex[k].massN && peaks[k][j].mz <= para.pIDLplex[k].massC){
+					if (peaks[0][j].mz >= para.minRange && peaks[0][j].mz <= para.maxRange &&
+						peaks[k][j].mz >= para.minRange && peaks[k][j].mz <= para.maxRange){
 						fz += peaks[k][j].iten;
 						fm += peaks[0][j].iten;
-					//}
+					}
 				}
 			}
 
+			
+
+			BYItenInfo temp;											//获取标记离子对
 			//计算a1离子ratio
-			if (peaks[0][0].iten != 0.0)
+			if (peaks[0][0].iten != 0.0){
 				a1_ratio.push_back(peaks[k][0].iten / peaks[0][0].iten);
-			else
+
+				//if (psmVec[i].scan == 50800){
+				//	cout << peaks[k][0].mz << " " << peaks[k][0].iten << endl;
+				//	cout << peaks[0][0].mz << " " << peaks[0][0].iten << endl;
+				//	cout << peaks[k][0].iten / peaks[0][0].iten << endl;
+				//	cout << log2(peaks[k][0].iten / peaks[0][0].iten) << endl;
+				//	getchar();
+				//}
+
+
+				temp.fz = peaks[k][0].iten;
+				temp.fm = peaks[0][0].iten;
+				psmVec[i].a1PairInten.push_back(temp);
+			}
+			else{
 				a1_ratio.push_back(0.0);
 
+				temp.fz = peaks[k][0].iten;
+				temp.fm = peaks[0][0].iten;
+				psmVec[i].a1PairInten.push_back(temp);
+			}
+
 			//计算by离子ratio
-			if (fm != 0.0)
+			if (fm != 0.0){
 				all_ratio.push_back(fz / fm);
-			else
+
+				temp.fz = fz;
+				temp.fm = fm;
+				psmVec[i].allIPairInten.push_back(temp);
+			}
+			else{
 				all_ratio.push_back(0.0);
 
+				temp.fz = fz;
+				temp.fm = fm;
+				psmVec[i].allIPairInten.push_back(temp);
+			}
+
 		}
+
+
 		psmVec[i].a1Ratio.swap(a1_ratio);
 		psmVec[i].allRatio.swap(all_ratio);
 
 
-		////输出测试
+		//输出测试
 		//for (int j = 0; j < psmVec[i].a1Ratio.size(); ++j)
 		//	cout << psmVec[i].a1Ratio[j] << " ";
 		//cout << endl;
@@ -454,7 +602,7 @@ void calpIDL(){
 void getReporter(){
 
 	if (para.quantMethod > -1 && para.quantMethod < 5){
-		cout << "\nStep4: Get " << reType[para.quantMethod] << " reporter-ion`s intensity." << endl;
+		cout << "\n[Step" << countStep++ << "]" << " Get all of the " << reType[para.quantMethod] << " reporter-ion`s intensity" << endl;
 	}
 	else{
 		cout << "\nQuant-parameter: " << para.quantMethod << " is not valid!" << endl;
@@ -510,9 +658,10 @@ void getReporter(){
 	else if (3 == para.quantMethod){
 	
 	}
-	else if (4 == para.quantMethod){
-		readModification();				//获取修饰-质量表
-		calpIDL();
+	else if (4 == para.quantMethod){	//提取pIDL离子对
+
+		readModification();						//获取修饰-质量表
+		calpIDL();										//匹配a1+、b+、b++、y+、y++离子并提取谱峰强度
 	}
 }
 
@@ -557,18 +706,24 @@ void correctIsotopeImpurities(){
 }
 
 
+/*
+该模块主要支持pFind 3的搜索结果，通过读取pFind.spectra文件获取PSMs
+通过读取pParse.exe导出的pf2idx、pf2文件提取谱峰
+然后根据具体的定量方法提取谱峰，赋给对应的PSM
+如果pIsobariQ.exe需要扩展支持其它引擎的定量结果，仅需在上一级扩展对应引擎分支即可，该分支属于pFind 3
+*/
 
 void readData(){
 
-	readPsms();									//Step1: 再将.spectra所有PSMload到内存中
+	readPsms();										//Step1: 再将.spectra所有PSMload到内存中
 
-	readPf2idx();								//Step2: 获取每个PSM的pf2pos
+	readPf2idx();									//Step2: 获取每个PSM的pf2pos
 
 	readPf2();										//Step3: 读取pf2获取所有谱峰信息
 
-	getReporter();								//Step4: 获取Reporter峰信息
+	getReporter();									//Step4: 获取Reporter峰信息
 
 	if (para.correct && (para.quantMethod == 0 || para.quantMethod == 1 || para.quantMethod == 2)){					
-		correctIsotopeImpurities();		//Step5: 矫正reporter ions强度
+		correctIsotopeImpurities();			//Step5: 矫正reporter ions强度
 	}
 }

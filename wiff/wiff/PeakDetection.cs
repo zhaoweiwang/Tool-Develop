@@ -6,36 +6,29 @@ using System.Linq;
 using System.Text;
 
 
-namespace wiff
-{
-    enum CentroidPosition
-    {
+namespace wiff{
+    enum CentroidPosition{
         gaussian,
         weightedMean
     };
 
-
-    class PeakDetection
-    {
+    class PeakDetection{
         public static double MS2MassTorrence = 0.03; //分辨率为±0.02，所以设置近邻的峰相差不多于0.01Da
         public static double MS1MassTorrence = 0.09;
 
-        private static int FindFirstLeftPeak(List<double> intensities, int peakIndex)
-        {
+        private static int FindFirstLeftPeak(List<double> intensities, int peakIndex){
             while (peakIndex > 0 && intensities[peakIndex - 1] == 0) --peakIndex;
             return peakIndex;
         }
 
-        private static int FindFirstRightPeak(List<double> intensities, int peakIndex)
-        {
+        private static int FindFirstRightPeak(List<double> intensities, int peakIndex){
             while (peakIndex < intensities.Count - 1 && intensities[peakIndex + 1] == 0) ++peakIndex;
             return peakIndex;
         }
 
 
         //QTOF仪器有的Profile只有一根峰，此时这根峰判断为无效谱峰
-        public static bool IsValidPeak(List<double> mzs, List<double> intensities, int peakIndex)
-        {
+        public static bool IsValidPeak(List<double> mzs, List<double> intensities, int peakIndex){
             //如果该峰左右都是0，那么该谱峰无效
             if (intensities[peakIndex] == 0) return false;
             if (peakIndex == 0)
@@ -200,35 +193,30 @@ namespace wiff
         }
 
         public static void CalcCenterMass(int minInd, int centerInd, int maxInd, List<double> mzs,
-            List<double> intensities, out double peakIntensity, out double peakCenterMass,
-            bool maxIntensity, int npoints, CentroidPosition centroidPosition)
-        {
+                                          List<double> intensities, out double peakIntensity,
+                                          out double peakCenterMass, bool maxIntensity, int npoints,
+                                          CentroidPosition centroidPosition){
             peakIntensity = 0;
             peakCenterMass = 0;
-            for (int j = minInd; j <= maxInd; j++)
-            {
-                if (maxIntensity)
-                {
-                    if (intensities[j] > peakIntensity)
-                    {
+            for (int j = minInd; j <= maxInd; j++){
+                if (maxIntensity){
+                    if (intensities[j] > peakIntensity){
                         peakIntensity = intensities[j];
                     }
-                }
-                else
-                {
+                }else{
                     peakIntensity += intensities[j];
                 }
             }
             peakCenterMass = mzs[centerInd];
             //return;
 
-            if (minInd == maxInd)
-            {
+            if (minInd == maxInd){
                 peakCenterMass = mzs[maxInd];
                 return;
             }
-            if (minInd == centerInd)
-            {
+
+
+            if (minInd == centerInd){
                 peakCenterMass = Estimate2(mzs[centerInd], mzs[centerInd + 1], intensities[centerInd],
                                            intensities[centerInd + 1]);
 
@@ -242,8 +230,9 @@ namespace wiff
 
                 return;
             }
-            if (maxInd == centerInd)
-            {
+
+
+            if (maxInd == centerInd){
                 //peakCenterMass = Estimate2(mzs[centerInd - 1], mzs[centerInd], mzs[centerInd - 1],
                 //                           mzs[centerInd]);
                 peakCenterMass = Estimate2(mzs[centerInd - 1], mzs[centerInd], intensities[centerInd - 1],
@@ -257,17 +246,16 @@ namespace wiff
 
                 return;
             }
-            if (npoints <= 3)
-            {
-                switch (centroidPosition)
-                {
+
+            if (npoints <= 3){
+                switch (centroidPosition){
                     case CentroidPosition.gaussian:
                         peakCenterMass = Estimate3(mzs[centerInd - 1], mzs[centerInd], mzs[centerInd + 1],
                                                    intensities[centerInd - 1], intensities[centerInd],
                                                   intensities[centerInd + 1]);
                         //Console.WriteLine("CentroidPosition: gaussian");
                         break;
-                    case CentroidPosition.weightedMean://加权
+                    case CentroidPosition.weightedMean:
                         peakCenterMass =
                             EstimateWeightedMean(new double[] { mzs[centerInd - 1], mzs[centerInd], mzs[centerInd + 1] },
                                                  new double[] { intensities[centerInd - 1], intensities[centerInd], intensities[centerInd + 1] });
@@ -280,8 +268,7 @@ namespace wiff
             }
         }
 
-        public static double Estimate2(double m1, double m2, double i1, double i2)
-        {
+        public static double Estimate2(double m1, double m2, double i1, double i2){
             double l1 = Math.Log(i1);
             double l2 = Math.Log(i2);
             return (m1 * l1 + m2 * l2) / (l1 + l2);
@@ -336,39 +323,38 @@ namespace wiff
 
         //左零到右零强度谱峰之间的进行中心化
         public static void WindowCentroid(List<double> profilemz, List<double> profileint,
-            out List<double> centermzs, out List<double> centerints, Spectrum spec)
-        {
+                                          out List<double> centermzs, out List<double> centerints,
+                                          Spectrum spec){
             centermzs = new List<double>();
             centerints = new List<double>();
             int ncenter, maxInd, minInd;
             double centerMass = 0, centerInt = 0;
-            for (int i = 0; i < profilemz.Count; ++i)
-            {
-                if (profileint[i] == 0) continue;//保证最左边与最右边的峰不为0
-                minInd = i;//记录最左边的峰
-                maxInd = i;//记录最右边的峰
-                List<int> MaxPeaks = new List<int>();
-                ncenter = i;//记录强度最高的峰
 
-                //找到下一个0点
-                while (maxInd + 1 < profilemz.Count && profileint[maxInd + 1] != 0)
-                {
+            for (int i = 0; i < profilemz.Count; ++i){
+                if (profileint[i] == 0) continue;       // 保证最左边与最右边的峰不为 0
+                minInd = i;                 // 记录最左边的峰
+                maxInd = i;                 // 记录最右边的峰
+                List<int> MaxPeaks = new List<int>();
+                ncenter = i;                // 记录强度最高的峰
+
+                // 找到下一个 0 点
+                while (maxInd + 1 < profilemz.Count && profileint[maxInd + 1] != 0){
                     ++maxInd;
-                    //强度最高的点作为中心
-                    if (profileint[maxInd] > profileint[ncenter]) ncenter = maxInd;
+                    // 强度最高的点作为中心
+                    if (profileint[maxInd] > profileint[ncenter])
+                        ncenter = maxInd;
                 }
                 //如果是有效的profile
-                if (spec.GetMSLevel() == 1)
-                {
+                if (spec.GetMSLevel() == 1){
                     //一级谱
-                    if (IsValidProfileMS1(profilemz, profileint, minInd, maxInd))
-                    {
-                        for (int j = minInd; j <= maxInd; ++j)
-                        {
-                            if (profileint[j] == profileint[ncenter])
-                            {
+                    if (IsValidProfileMS1(profilemz, profileint, minInd, maxInd)){
+                        //Console.WriteLine("一级谱 Scan：" + spec.scan + 1);
+                        for (int j = minInd; j <= maxInd; ++j){
+                            if (profileint[j] == profileint[ncenter]){
                                 MaxPeaks.Add(j);
                             }
+                            // 输出 profile 峰看特点
+                            //Console.WriteLine(profilemz[j] + " " + profileint[j]);
                         }
                         ncenter = MaxPeaks[MaxPeaks.Count / 2];//如果强度最高的谱峰不只一个，则取中间的一个
                         //for (int p = 0; p < MaxPeaks.Count(); p++)
@@ -381,26 +367,33 @@ namespace wiff
                         //int npoints = maxInd - minInd + 1;
                         CalcCenterMass(minInd, ncenter, maxInd, profilemz, profileint, out centerInt, out centerMass,
                             false, npoints, CentroidPosition.weightedMean);
-                        if (!Double.IsNaN(centerMass))
-                        {
+                        if (!Double.IsNaN(centerMass)){
                             centermzs.Add(centerMass);
                             centerints.Add(centerInt);
                         }
                     }
                 }
 
-                if (spec.GetMSLevel() > 1)
-                {
+                if (spec.GetMSLevel() > 1){
                     //二级谱
-                    if (IsValidProfileMS2(profilemz, profileint, minInd, maxInd))
-                    {
-                        for (int j = minInd; j <= maxInd; ++j)
-                        {
-                            if (profileint[j] == profileint[ncenter])
-                            {
+                    if (IsValidProfileMS2(profilemz, profileint, minInd, maxInd)){
+                        //Console.WriteLine("二级谱 Scan：", spec.scan + 1);
+                        for (int j = minInd; j <= maxInd; ++j){
+                            if (profileint[j] == profileint[ncenter]){
                                 MaxPeaks.Add(j);
                             }
+                            // 输出 profile 峰看特点
+                            //Console.WriteLine(profilemz[j] + " " + profileint[j]);
                         }
+
+                        if(maxInd - minInd > 10){
+                            Console.WriteLine("二级谱 Scan：" + spec.scan + 1);
+                            for (int j = minInd; j <= maxInd; ++j){
+                                Console.WriteLine(profilemz[j] + " " + profileint[j]);
+                            }
+                            Console.Read();
+                        }
+
                         ncenter = MaxPeaks[MaxPeaks.Count / 2];//如果强度最高的谱峰不只一个，则取中间的一个
                         //for (int p = 0; p < MaxPeaks.Count(); p++)
                         //{
@@ -412,15 +405,13 @@ namespace wiff
                         //int npoints = maxInd - minInd + 1;
                         CalcCenterMass(minInd, ncenter, maxInd, profilemz, profileint, out centerInt, out centerMass,
                             false, npoints, CentroidPosition.weightedMean);
-                        if (!Double.IsNaN(centerMass))
-                        {
+                        if (!Double.IsNaN(centerMass)){
                             centermzs.Add(centerMass);
                             centerints.Add(centerInt);
                         }
                     }
                 }
             }
-
         }
 
         ////这个方法是基于质量误差的，但是导出谱图的时候，质量精度我们并不知道，所以暂时放弃这种方法。
@@ -471,8 +462,7 @@ namespace wiff
         //}
 
         private static bool IsValidProfileMS2(List<double> profilemz, List<double> profileint,
-            int minInd, int maxInd)
-        {
+            int minInd, int maxInd){
             //说明只有窗口内只有两根峰
             //if (maxInd - minInd == 1) {
             //    if (profileint[maxInd] == profileint[minInd]) return false;
@@ -483,7 +473,7 @@ namespace wiff
             //    if (profileint[maxInd] == profileint[minInd]) return false;
             //    else return true;
             //} 
-            //不去掉一根谱峰的情况，情况比profilemode效果好很多
+            //不去掉一根谱峰的情况，情况比 profilemode 效果好很多
             if (maxInd - minInd >= 0)
             {
                 return true;
@@ -554,10 +544,9 @@ namespace wiff
 
         //}
 
-        private static bool IsValidProfileMS1(List<double> profilemz, List<double> profileint, int minInd, int maxInd)
-        {
-            //说不定可以用一下
-            if (maxInd - minInd >= 0) return true;
+        private static bool IsValidProfileMS1(List<double> profilemz, List<double> profileint, int minInd, int maxInd){
+            if (maxInd - minInd >= 0)
+                return true;
             return false;
         }
     }

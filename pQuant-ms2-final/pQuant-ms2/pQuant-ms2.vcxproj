@@ -167,6 +167,9 @@
     <ClInclude Include="sisocks.h" />
     <ClInclude Include="stringProcess.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="pIsobariQ.para" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

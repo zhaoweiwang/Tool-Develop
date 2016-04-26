@@ -1,5 +1,6 @@
 #include "Head.h"
 
+extern int countStep;
 extern parainfo para;
 unordered_map<string, string>  acDe;
 
@@ -30,7 +31,7 @@ inline bool compSize(const proteinInfo& a, const proteinInfo& b){
 
 void readFasta(){
 
-	cout << "\nStep7: Read .fasta file." << endl;
+	cout << "\n[Step" << countStep++ << "]" << " Read .fasta file" << endl;
 
 	ifstream inputFasta;
 	inputFasta.open(para.fasta_path, ios::binary);
